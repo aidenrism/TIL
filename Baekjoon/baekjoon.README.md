@@ -227,3 +227,42 @@ while True:
 
 빈 리스트에 값이 있었는지, 있었다면 같은 유형의 괄호인지를 판단해서 기존 괄호를 리스트에서 제거해주거나 다른 유형일때에 break로 for 문에서 빠져나와서  no를 출력해줄 수 있도록 하였다.
 
+
+
+## #2669_직사각형
+
+사각형의 면적들을 구하기 위해서는 각 열의 2행-1행 * 4행-3행을 하면된다
+
+하지만 겹치는 부분을 구하는게 단순하지 않다
+
+0 1 / 0 2 / 0 3 / 1 2 / 1 3/ 2 3 
+
+6개를 비교하고
+
+그냥 부분집합마다 비교를 해야한다
+
+```python
+hundred = [[0] * 100 for _ in range(100)]
+for _ in range(4):
+    x1, y1, x2, y2 = list(map(int, input().split()))
+    cnt = 0
+    for i in range(x1, x2):
+        for j in range(y1, y2):
+            if hundred[i][j] == 0:
+                hundred[i][j] == 1
+                cnt += 1
+    print(cnt)
+    # print(x1)
+    # print(hundred)
+```
+
+6
+12
+12
+3
+
+cnt 위로 올리고 print 밖으로 빼주면 33나옴
+
+j i 바꿔줘도 똑같음
+
+==1이 잘못되었다. =1 로 해줘야 중복값이 빠진다.
