@@ -266,3 +266,76 @@ cnt 위로 올리고 print 밖으로 빼주면 33나옴
 j i 바꿔줘도 똑같음
 
 ==1이 잘못되었다. =1 로 해줘야 중복값이 빠진다.
+
+
+
+
+
+## #7568_덩치
+
+몸무게와 키가 주어진다
+
+몸무게와 키가 나머지 사람들보다 크면 그 사람은 덩치가 가장 큰 사람이다
+
+하지만 몸무게는 다른 사람보다 크지만 키가 작으면 덩치가 크다고 표현하지 못한다
+
+따라서 키와 몸무게가 다른사람들보다 둘다 작다면 등수가 밀려나고 둘다 높아야만 등수가 올라간다.
+
+
+
+인풋개수만큼 등수를 표현한다.
+
+
+
+```python
+for i in range(5):
+    body = map(int, input().split())
+    print(*body) # *안써주면 그냥 map 객체로 나옴
+
+```
+
+
+
+```python
+students = []
+for i in range(5):
+    w, h= map(int, input().split())
+    # print(*body)
+    students.append((w,h))
+
+print(students[0])
+```
+
+튜플로 묶어주면 두개가 하나로 묶여 append 가능하고 리스트에 집어넣을 수 있음
+
+브루트포스 알고리즘으로
+
+리스트 각 원소의 w와 h를 같이 and와 이중포문으로 다른 원소들과 비교해주어
+
+초기값 = 1 그리고 만약 다른 원소들보다  두값이 동시에 작다면 rank를 +1 해주면 각 원소들의 등수를 첫원소부터 마지막 원소들까지 출력시킬 수 있다.
+
+print에 end값을 ' ' 공백으로 주어야 한다.
+
+
+
+```python
+students = []
+for i in range(5):
+    w, h= map(int, input().split())
+    # print(*body)
+    students.append((w,h))
+
+ # 브루트포스 알고리즘 두가지의 값을 순차적으로 비교
+# n명을 n-1번씩 순차적으로 전수 비교
+for i in students:
+    rank = 1
+    for j in students:
+        # i순서의 몸무게가 다른것들(n-1개)의 몸무게보다 작고 키도 마찬가지로 작으면 rank를 더해줌
+        if i[0] < j[0] and i[1] < j[1]:
+            rank += 1
+    print(rank, end=' ')
+
+```
+
+
+
