@@ -339,3 +339,70 @@ for i in students:
 
 
 
+## #1316_그룹단어체커
+
+aabbcc , kin ccazzz 는 그룹단어
+
+aba, eewwe 는 그룹단어가 아니다.
+
+연속해서 단어가 나타나야한다.
+
+
+
+단어는 100보다 작거나 같은 단어의 개수가 들어온다.
+
+주어진 단어들을 돌려서 기존에 있던 값이 나온다면 카운트 시키지 않고 
+
+그룹단어가 나오면 count를 해준다.
+
+
+
+그래서 어떻게 기존에 있던 단어가 나올건지 구분할거냐하면 
+
+dict를 이용하여 기존에 없던 값들이면 빈 딕셔너리 키값으로 넣어주고 
+
+만약 있던 값들이면 다시 if else 분기로 나누어 판가름해준다.
+
+만약  word의 i-1인덱스과 다르다면 False를 return 해주고 아니라면 counting을 해주는 함수를 만들었다.
+
+만약 False가 되지 않는다면 True를 return해준다.
+
+
+
+```python
+def group_word(word):
+    n = len(word)
+   # group_cnt = 0
+    emp = {}
+    for i in range(n):
+        if word[i] not in emp:
+            emp[word[i]] = 1
+        else:
+            if word[i-1] != word[i]:
+                # print('no')
+                return False
+            else:
+                emp[word[i]] += 1
+    return True
+```
+
+```python
+T = int(input())
+
+cnt = 0
+for _ in range(T):
+    word = input()
+    cnt += group_word(word)
+
+print(cnt)
+```
+
+그리고 들어오는 단어들에 이 함수를 적용해준다.
+
+3
+happya
+new
+year
+2 :ok:정답
+
+ 
