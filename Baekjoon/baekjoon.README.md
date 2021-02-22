@@ -1,6 +1,6 @@
+# BOJ 문제풀이
 
-
-
+ :smiley:  :slightly_smiling_face:  :sweat:  :face_with_head_bandage:
 
 ## #1449_수리공항승
 
@@ -406,3 +406,160 @@ year
 2 :ok:정답
 
  
+
+## #2578_빙고
+
+2.5)​ :sweat: 
+
+```python
+bingo = [list(map(int, input().split())) for _ in range(5)]
+check = [list(map(int, input().split())) for _ in range(5)]
+# 2차원 리스트
+# print(bingo)
+# print(check)
+
+check_lst = []
+for i in range(len(check)):
+    for j in range(len(check[0])):
+        check_lst.append(check[i][j])
+# print(check_lst)
+
+cnt = 0
+total = 0
+for idx in check_lst:
+    for i in range(len(bingo)):
+        line_cnt = []
+        for j in range(len(bingo[0])):
+            if bingo[i][j] == idx:
+                bingo[i][j] = 1
+                cnt += 1
+                line_cnt.append(bingo[i][j])
+            if sum(line_cnt) == 5:
+                total += 1
+    if total == 3:
+        print(cnt)
+
+```
+
+이렇게 한다면 line_cnt가 줄이 바뀔때마다 1이 5개 있다면 빙고를 세줌
+
+
+
+```python
+check_lst = []
+for i in range(len(check)):
+    for j in range(len(check[0])):check_lst.append(check[i][j])
+# print(check_lst)
+
+cnt = 0
+result = []
+line_cnt4 = 0
+for idx in check_lst:
+    cnt += 1
+    # 가로로 빙고 세기
+    line_cnt3 = 0
+
+    for i in range(len(bingo)):
+        line_cnt1 = 0
+        line_cnt2 = 0
+        for j in range(len(bingo[0])):
+            if bingo[i][j] == idx:
+                bingo[i][j] = 1
+            line_cnt1 += bingo[i][j]
+            line_cnt2 += bingo[j][i]
+            if line_cnt1 == 5:
+                result.append(1)
+            if line_cnt2 == 5:
+                result.append(1)
+            if i == j:
+                line_cnt3 += bingo[i][j]
+                if line_cnt3 == 5:
+                    result.append(1)
+    for ldx in range(len(bingo)):
+        for jdx in range(len(bingo)-1,-1,-1):
+            if ldx == 0 and jdx == 4:
+                line_cnt4 += bingo[ldx][jdx]
+                break
+            elif ldx == 1 and jdx ==3:
+                line_cnt4 += bingo[ldx][jdx]
+                break
+            elif ldx == 2 and jdx == 2:
+                line_cnt4 += bingo[ldx][jdx]
+                break
+            elif ldx == 3 and jdx == 1:
+                line_cnt4 += bingo[ldx][jdx]
+                break
+            elif ldx == 4 and jdx == 1:
+                line_cnt4 += bingo[ldx][jdx]
+                break
+    if line_cnt4 == 5:
+        result.append(1)
+
+    if len(result) == 3:
+        print(cnt)
+        break
+
+```
+
+개수가 맞게 안나온다.
+
+
+
+구글링하다가  빙고를 카운팅하는 함수를 갖다 사용함..
+
+```python
+def finder(ptable):
+    bingoCount = 0
+    for Py in range(5):
+        if (ptable[Py][0] == ptable[Py][1] == ptable[Py][2] == ptable[Py][3] == ptable[Py][4] == 1):
+            bingoCount += 1
+
+    for Px in range(5):
+        if (ptable[0][Px] == ptable[1][Px] == ptable[2][Px] == ptable[3][Px] == ptable[4][Px] == 1):
+            bingoCount += 1
+
+    if (ptable[0][0] == ptable[1][1] == ptable[2][2] == ptable[3][3] == ptable[4][4] == 1):
+        bingoCount += 1
+
+    if (ptable[0][4] == ptable[1][3] == ptable[2][2] == ptable[3][1] == ptable[4][0] == 1):
+        bingoCount += 1
+
+    return bingoCount
+```
+
+이 함수를 사용한다면
+
+```python
+bingo = [list(map(int, input().split())) for _ in range(5)]
+check = [list(map(int, input().split())) for _ in range(5)]
+# 2차원 리스트
+# print(bingo)
+# print(check)
+
+# 체크 리스트에 값들을 인덱스 순서대로 더해줌. 나중에  for문을 쉽게 돌리려고
+check_lst = []
+for i in range(len(check)):
+    for j in range(len(check[0])):check_lst.append(check[i][j])
+# print(check_lst)
+
+cnt = 0
+result = []
+# 체크리스트 한번씩 숫자가 나올때마다 카운트 1씩 증가
+for idx in check_lst:
+    cnt += 1
+    # 해당되는 빙고판의 값을 1로 변경해주기
+    for i in range(len(bingo)):
+        for j in range(len(bingo[0])):
+            if bingo[i][j] == idx:
+                bingo[i][j] = 1
+    # 이전에 가로 세로 양 대각선의 값이 1일때 카운팅을 해주는 함수 사용
+    if finder(bingo) >= 3:
+        print(cnt)
+        break
+
+```
+
+해당되는 값에 1만 넣고  체크리스트에서 idx 돌리는 값이 끝나기전에 함수로 체크해주면 된다.
+
+ 
+
