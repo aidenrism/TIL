@@ -1,5 +1,6 @@
 import sys
 sys.stdin = open('input.txt')
+
 # 빙고판 채우기
 # bingo = []
 # bingoCheck = [[0 for j in range(5)] for i in range(5)]
@@ -13,6 +14,8 @@ sys.stdin = open('input.txt')
 
 # data = [(0,0) for i in range(26)]
 # print(data)
+
+
 def finder(ptable):
     bingoCount = 0
     for Py in range(5):
