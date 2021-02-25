@@ -563,3 +563,150 @@ for idx in check_lst:
 
  
 
+## #2628_종이자르기
+
+```python
+row, col = map(int, input().split())
+n = int(input())
+
+cut = []
+for idx in range(n):
+    cut_idx = list(map(int, input().split()))
+    # print(*cut_idx)
+    cut.append(cut_idx)
+print(cut)
+```
+
+[[0, 3], [1, 4], [0, 2]]
+
+2차원 리스트 받기
+
+세로의 자르고나서 큰 구간 리스트와 가로의 자르고 나서 큰 구간을 리스트에 각각 넣어준다
+
+[5, 6]
+[6]
+
+리스트중 작은 값을 뽑아준다.(퀵정렬 사용)
+
+```python
+print(q_sort(y_list)[0])
+print(q_sort(x_list)[0])
+```
+
+5
+6
+
+두값을 곱해준다.
+
+30
+
+-----반례가 많아서 새로 시작
+
+```python
+for idx in range(n):
+    cut_idx = list(map(int, input().split()))
+    # 가로로 자를때 ==> 세로를 봐야함.
+    if cut_idx[0] == 0:
+        y_list.append(cut_idx[1])
+y_list.append(0)
+y_list.append(col)
+print(q_sort(y_list))
+```
+
+[0, 2, 3, 8]
+
+세로값들을 받아주고 i와 i-1의 값을 빼주며 그 값을 비교할 것이다.
+
+```python
+y_list = q_sort(y_list)
+section = []
+for i in range(len(y_list)-1, 0, -1):
+    section.append(y_list[i]-y_list[i-1])
+print(q_sort(section))
+```
+
+[1, 2, 5]
+
+이제 여기서 큰값과 x의 큰값을 곱해주자.
+
+[0, 2, 3, 8]
+[0, 4, 10]
+[1, 2, 5]
+[4, 6]
+30
+
+
+
+```python
+# 퀵정렬
+def q_sort(nums):
+    if len(nums) <= 1:
+        return nums
+    left, right = [], []
+    pibut = nums[0]
+    for idx in range(1, len(nums)):
+        if nums[idx] < pibut:
+            left.append(nums[idx])
+        else:
+            right.append(nums[idx])
+
+    sorted_left = q_sort(left)
+    sorted_right = q_sort(right)
+    return [*sorted_left, pibut, *sorted_right]
+
+## input 시작
+row, col = map(int, input().split())
+
+n = int(input())
+
+cut = []
+x_list = []
+y_list = []
+
+for idx in range(n):
+    cut_idx = list(map(int, input().split()))
+    # 가로로 자를때 ==> 세로를 봐야함.
+    if cut_idx[0] == 0:
+        y_list.append(cut_idx[1])
+    else:
+        x_list.append(cut_idx[1])
+
+y_list.append(0)
+y_list.append(col)
+x_list.append(0)
+x_list.append(row)
+
+# print(q_sort(y_list))
+# print(q_sort(x_list))
+
+y_list = q_sort(y_list)
+x_list = q_sort(x_list)
+section_y = []
+section_x = []
+
+for i in range(len(y_list)-1, 0, -1):
+    section_y.append(y_list[i]-y_list[i-1])
+# print(q_sort(section_y))
+
+for k in range(len(x_list)-1, 0, -1):
+    section_x.append(x_list[k]-x_list[k-1])
+# print(q_sort(section_x))
+
+x, y = [], []
+try:
+    y = q_sort(section_y)[-1]
+    x = q_sort(section_x)[-1]
+except:
+    if x:
+        pass
+    else:
+        x = row
+    if y:
+        pass
+    else:
+        y =col
+print(x*y)
+```
+
+코드가 길긴하지만 알아보기엔 쉬울지도..모르겠다.
+
