@@ -2452,3 +2452,371 @@ for tc in range(1, T+1):
 
 8방향을 살피며 사이에 있는 돌만 같은 돌로 처리해주었지 한개의 돌 이상을 사이에 두고 있는 경우를 처리해주지 못하였다.
 
+
+
+```python
+T = int(input())
+for tc in range(1, T + 1):
+    N, M = map(int, input().split())
+    board = [[0] * N for _ in range(N)]
+    board[N // 2 - 1][N // 2 - 1] = board[N // 2][N // 2] = 2
+    board[N // 2 - 1][N // 2] = board[N // 2][N // 2 - 1] = 1
+
+    for _ in range(M):
+        r, c, g = map(int, input().split())
+        r, c = r - 1, c - 1
+        board[c][r] = g
+        g2 = 2 if g - 2 else 1
+
+        # 상 하
+        m = 1
+        change = False
+        while c - m > 0 and board[c - m][r] == g2:
+            m += 1
+            if board[c - m][r] == g:
+                change = True
+                break
+        if change:
+            for i in range(1, m):
+                board[c - i][r] = g
+
+        m = 1
+        change = False
+        while c + m < N - 1 and board[c + m][r] == g2:
+            m += 1
+            if board[c + m][r] == g:
+                change = True
+                break
+        if change:
+            for i in range(1, m):
+                board[c + i][r] = g
+
+        # 좌 우
+        m = 1
+        change = False
+        while r - m > 0 and board[c][r - m] == g2:
+            m += 1
+            if board[c][r - m] == g:
+                change = True
+                break
+        if change:
+            for i in range(1, m):
+                board[c][r - i] = g
+
+        m = 1
+        change = False
+        while r + m < N - 1 and board[c][r + m] == g2:
+            m += 1
+            if board[c][r + m] == g:
+                change = True
+                break
+        if change:
+            for i in range(1, m):
+                board[c][r + i] = g
+
+        # 좌상 우하
+        m = 1
+        change = False
+        while c - m > 0 and r - m > 0 and board[c - m][r - m] == g2:
+            m += 1
+            if board[c - m][r - m] == g:
+                change = True
+                break
+        if change:
+            for i in range(1, m):
+                board[c - i][r - i] = g
+
+        m = 1
+        change = False
+        while c + m < N - 1 and r + m < N - 1 and board[c + m][r + m] == g2:
+            m += 1
+            if board[c + m][r + m] == g:
+                change = True
+                break
+        if change:
+            for i in range(1, m):
+                board[c + i][r + i] = g
+
+        # 우상 좌하
+        m = 1
+        change = False
+        while c - m > 0 and r + m < N - 1 and board[c - m][r + m] == g2:
+            m += 1
+            if board[c - m][r + m] == g:
+                change = True
+                break
+        if change:
+            for i in range(1, m):
+                board[c - i][r + i] = g
+
+        m = 1
+        change = False
+        while c + m < N - 1 and r - m > 0 and board[c + m][r - m] == g2:
+            m += 1
+            if board[c + m][r - m] == g:
+                change = True
+                break
+        if change:
+            for i in range(1, m):
+                board[c + i][r - i] = g
+
+    cnt = [0] * 3
+
+    for i in range(N):
+        for j in range(len(board[i])):
+            cnt[board[i][j]] += 1
+
+    print('#{} {} {}'.format(tc, cnt[1], cnt[2])
+```
+
+ m의 값을 조정하며 한칸씩 이동하며 8방향으로 자신의 돌과 다른 색의 돌이 있는지 확인하고
+
+만약 다른돌이라면 m을 1씩 늘려 다음의 돌이 자신과 같은 지 확인하여준다
+
+같으면 사이의 돌을 자신의 색으로 바꾸고 
+
+다르다면 m을 1 을 더 늘려 그 다음 돌도 자신과 다른색인지 확인하여준다.
+
+만약 다르다면  또다시 m을 늘려 그 다음 돌이 자신과 같은 지 확인하여준다.
+
+
+
+마지막에 cnt인덱스의 해당되는 값이 몇개인지 세어준다.
+
+
+
+
+
+```python
+T = int(input())
+for tc in range(1, T+1):
+    # 1. input 받고
+    n, m = map(int, input().split())
+    # 2-1. index 맞추기 위해서 테두리 추가
+    board = [[0 for _ in range(n+2)] for _ in range(n+2)]
+    c = (n+2) // 2
+    # 2-2. 정가운데 돌 배치 > 게임 기본 세팅
+    for i in range(c-1, c+1):
+        board[i][i] = 2
+        board[i][n+1-i] = 1
+ 
+    # 3. m번 동안 반복
+    for _ in range(m):
+        x, y, color = map(int, input().split())
+        # 4. 해당 위치에 돌을 놓고
+        board[y][x] = color
+ 
+        # 5-1. 주변 8방향 탐색
+        for i in [-1, 0, 1]:
+            for j in [-1, 0, 1]:
+                # 5-2. 탐색한 칸이 0이 아니고, 상대편 돌이면,
+                if board[y+i][x+j] and board[y+i][x+j] != color:
+                    # 5-3. 해당 방향으로 전진
+                    row, col = i, j
+                    cnt = 0
+                    change = False
+                    while 0 < y+row <=n and 0 < x+col <= n:
+                        cnt += 1
+                        # 6-1. 전진한 칸이 0이면 바꿀 게 없음 > break
+                        if not board[y+row][x+col]:
+                            break
+                        # 6-2. 전진한 칸이 내 돌이면 거기까지 바꿀 수 있음 > break
+                        elif board[y+row][x+col] == color:
+                            change = True
+                            break
+                        row += i
+                        col += j
+                         
+                    # 6-3. 바꿀 수 있는 구간까지 다 내 돌로 바꾸기
+                    if change:
+                        for step in range(1, cnt):
+                            board[y + i*step][x + j*step] = color
+ 
+    # 7. 돌 세기
+    black = 0
+    white = 0
+    for row in board:
+        for stone in row:
+            if stone == 1:
+                black += 1
+            elif stone == 2:
+                white += 1
+ 
+    print('#{} {} {}'.format(tc, black, white))
+```
+
+값이 들어올 때마다 델타이동 시켜서 값을 변경해주기
+
+
+
+## #1859_백만장자project
+
+
+
+처음부터 끝까지  for문을 돌려준다
+
+만약 그 값부터 끝 인덱스까지 중 최고값이 아니라면 items 리스트에 append 해준다
+
+만약 그값부터 끝값까지 중 max 인덱스라면 items에 들어있던 값들을 max에서 빼주어 그 값은 counting 한다.
+
+이렇게 반복하여 max일때 계속 팔아서 값을 계산해준다.
+
+
+
+```python
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+    prices = list(map(int, input().split()))
+
+    items = []
+    cnt = 0
+    for i in range(len(prices)):
+        if prices[i] != max(prices[i:n]):
+            items.append(prices[i])
+        elif prices[i] == max(prices[i:n]):
+            for idx in items:
+                cnt += prices[i] - idx
+            items = []
+
+    print(cnt)
+```
+
+시간 초과 30초이상..
+
+테케에 10만개까지는 뜨느데 그 이상은 오래걸림.
+
+
+
+max값들
+
+1 (1, 4575)
+2 (1, 9445)
+3 (7, 8417)
+4 (42, 9980)
+5 (757, 9995)
+6 (3498, 10000)
+
+
+
+정답
+
+```python
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+    prices = list(map(int, input().split()))
+	
+    # 끝에서 부터 시작
+    idx = h_idx = n-1
+    total = 0
+	# idx를 하나씩 줄여가면서 높은값에서 빼줌 
+    while idx >= 0:
+        h_price = prices[h_idx]
+        c_price = prices[idx]
+        # 마지막 인덱스값보다 작을 땐 total 변수에 더하기만 해줌 
+        if h_price > c_price:
+            total += h_price - c_price
+        # 만약 마지막값보다 크거나 같은 값이 나오면 highest값을 현재값으로 변경해줌
+        else:
+            h_idx = idx
+        idx -= 1
+
+    print(tc, total)
+# 출력되기까지의 시간 
+print(time.time()-start)
+```
+
+1 4053
+2 6385
+3 26725
+4 211514
+5 4848198
+6 49761546
+7 500155606
+8 4995241394
+9 4999367498
+10 4995633799
+2.1469883918762207
+
+
+
+다른풀이
+
+```python
+T = int(input())
+for tc in range(1, T + 1):
+    N = int(input())
+    prices = list(map(int, input().split()))
+
+    benefit = 0
+
+    # 배열 뒤집어
+    prices = prices[::-1]
+    expensive = prices[0]
+
+    for i in range(len(prices)):
+        if expensive > prices[i]:
+            benefit += expensive - prices[i]
+        else:
+            expensive = prices[i]
+    print('#{} {}'.format(tc, benefit))
+```
+
+while로 인덱스값을 조정하는게 아니라 for문으로 큰 값을 변경해가면서 작은값들 total변수에 더해주기.
+
+
+
+
+
+## #4874_Forth
+
+0.5)
+
+후위연산 기본
+
+스택을 사용하여 연산자가 나올때마다 pop하여 계산하여 준다.
+
+```python
+T = int(input())
+for tc in range(1, T+1):
+
+    def backsolve(test_list):
+        stack = []
+        for i in range(len(test_list)):
+            if test_list[i] == '+':
+                try:
+                    stack.append(int(stack.pop()) + int(stack.pop()))
+                except:
+                    return 'error'
+            elif test_list[i] == '-':
+                try:
+                    stack.append(int(stack.pop()) - int(stack.pop()))
+                except:
+                    return 'error'
+            elif test_list[i] == '*':
+                try:
+                    stack.append(int(stack.pop()) * int(stack.pop()))
+                except:
+                    return 'error'
+            elif test_list[i] == '/':
+                try:
+                    stack.append(int(stack.pop()) / int(stack.pop()))
+                except:
+                    return 'error'
+            else:
+                stack.append(test_list[i])
+
+            if test_list[i] == '.':
+               return stack[0]
+
+    test_list = list(input().split())
+    print('#{} {}'.format(tc, backsolve(test_list)))
+```
+
+stack.pop을 사용할 때 int로 변환을 해주어야 에러가 나지 않는다.
+
+
+
+
+
