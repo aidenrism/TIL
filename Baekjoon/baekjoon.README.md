@@ -710,3 +710,220 @@ print(x*y)
 
 코드가 길긴하지만 알아보기엔 쉬울지도..모르겠다.
 
+
+
+## #1260_DFS와BFS
+
+2.5)
+
+
+
+visited로 체크하려고 했다가 완성하지 못한 코드
+
+```python
+def dfs(V):
+    
+    visited = [False for _ in range]
+
+
+N, M, V = map(int,input().split())
+graph = [[] for _ in range(N+1)]
+for _ in range(M):
+    v1, v2 = map(int, input().split())
+    graph[v1].append(v2)
+    graph[v2] += [v1]
+
+#     print(fr, to)
+# print(N,M,V)
+print(graph)
+visited = [False for _ in range(N+1)]
+print(dfs(V))
+# print(result)
+```
+
+
+
+dfs  - with stack
+
+```python
+def dfs(V):
+    # visited = [False for _ in range(N+1)]
+    to_visits = [V]
+    # 방문한 값들 (길들)
+    path = []
+	
+    # 스택에 쌓인 값들이 있는 동안 반복
+    while to_visits:
+        # 뒤쪽에서부터 추출 
+        current = to_visits.pop()
+        # for idx in to_visits:
+        if current not in path:
+            # current = True
+            path.append(current)
+            # print(current)
+            # 작은 값들부터 확인한다고 문제에서 나왔으므로 정렬후 4321 로 해야 마지막 인덱스인 1으로 뻗어나간다.
+            to_visits += sorted(G[current])[::-1]
+    return path
+
+N, M, V = map(int, input().split())
+G = [[] for _ in range(N+1)]
+for _ in range(M):
+    v1, v2 = map(int, input().split())
+    # 단방향이 아니라 양방향이므로 양쪽에 from to 가 아닌 양쪽으로 append
+    G[v2].append(v1)
+    G[v1].append(v2)
+
+
+print(dfs(V))
+# print(G)
+```
+
+
+
+bfs - with stack
+
+```python
+def bfs(V):
+    # visited = [False for _ in range(N+1)]
+    to_visits = [V]
+    path = []
+
+    while to_visits:
+        # for _ in range(len(to_visits)):
+        # 처음 시작점에서부터 인접한 값들부터 방문할 것이므로 첫값에서 append된 앞쪽부터 살펴본다
+        # 이 값들에서 나온 값들은 뒤에 append되므로 나중에 방문하지 못하였을시 방문하게된다.
+         current = to_visits.pop(0)
+        # for idx in to_visits:
+         if current not in path:
+            # current = True
+            path.append(current)
+            # print(current)
+            # pop을 앞에서 부터 하고 작은값부터 문제에서 방문하기로 하였으므로 오름차순 정렬
+            to_visits += sorted(G[current])
+    return path
+
+for tc in range(2):
+    N, M, V = map(int, input().split())
+    G = [[] for _ in range(N+1)]
+    for _ in range(M):
+        v1, v2 = map(int, input().split())
+        G[v2].append(v1)
+        G[v1].append(v2)
+
+
+
+    print(bfs(V))
+    print(G)
+```
+
+
+
+합친코드
+
+```python
+def dfs(V):
+    # visited = [False for _ in range(N+1)]
+    to_visits = [V]
+    path = []
+
+    # 스택에 쌓인 값들이 있는 동안 반복
+    while to_visits:
+        # 뒤쪽에서부터 추출 
+        current = to_visits.pop()
+        # for idx in to_visits:
+        if current not in path:
+            # current = True
+            path.append(current)
+            # print(current)
+            # 작은 값들부터 확인한다고 문제에서 나왔으므로 정렬후 4321 로 해야 마지막 인덱스인 1으로 뻗어나간다.
+            to_visits += sorted(G[current])[::-1]
+    return path
+
+def bfs(V):
+    # visited = [False for _ in range(N+1)]
+    to_visits = [V]
+    path = []
+
+    while to_visits:
+        # for _ in range(len(to_visits)):
+        # 처음 시작점에서부터 인접한 값들부터 방문할 것이므로 첫값에서 append된 앞쪽부터 살펴본다
+        # 이 값들에서 나온 값들은 뒤에 append되므로 나중에 방문하지 못하였을시 방문하게된다.
+         current = to_visits.pop(0)
+        # for idx in to_visits:
+         if current not in path:
+            # current = True
+            path.append(current)
+            # print(current)
+            # pop을 앞에서 부터 하고 작은값부터 문제에서 방문하기로 하였으므로 오름차순 정렬
+            to_visits += sorted(G[current])
+    return path
+
+N, M, V = map(int, input().split())
+G = [[] for _ in range(N+1)]
+for _ in range(M):
+    v1, v2 = map(int, input().split())
+    G[v2].append(v1)
+    G[v1].append(v2)
+
+print(*dfs(V))
+print(*bfs(V))
+```
+
+
+
+새로운 값에 대한 처리가 안된 코드
+
+```python
+def dfs(V):
+    path = []
+    to_visits = [V]
+    
+    v = to_visits.pop()
+    if v not in path:
+        path.append(v)
+        new_v = sorted(G[v])[0]
+        dfs(new_v)
+```
+
+
+
+dfs - with recursive
+
+```python
+def dfs(V):
+	# 계속 한개씩 들어감
+    to_visits = [V]
+    v = to_visits.pop()
+    if v not in path:
+        path.append(v)
+        # new_v = 0
+		
+        # 새로운 값들을 작은값부터 방문 
+        for new_v in sorted(G[v]):
+        # print(sorted(G[v])[0])
+            dfs(new_v)
+
+    return path
+for tc in range(3):
+    N, M, V = map(int, input().split())
+    G = [[] for _ in range(N+1)]
+    for _ in range(M):
+        v1, v2 = map(int, input().split())
+        G[v1].append(v2)
+        G[v2].append(v1)
+        
+	# return값이 없다 path를 여기에 미리 선언해주어야 함
+    path = []
+    print(dfs(V))
+```
+
+
+
+dfs는 인접한 인덱스의값이 방문된적이 없을 때, 마지막에 append된 값이 pop되어 깊이 들어갔다가 더 이상 방문하지 못한 값이 없을 때 다시 올라와서 다른 방향을 체크함.
+
+
+
+bfs는 타겟처럼 범위로 인접한 값들부터 먼저 방문하고 방문하면서  append된 값들은 뒤로가기 때문에 중복된값들이 이미 앞에서 나왔을 시에 방문할 필요가 없어진다.
+
+pop을 앞쪽에서 실시한다.
+
