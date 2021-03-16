@@ -927,3 +927,81 @@ bfs는 타겟처럼 범위로 인접한 값들부터 먼저 방문하고 방문�
 
 pop을 앞쪽에서 실시한다.
 
+
+
+## #18429_근손실 
+
+
+
+중량 증가량 리스트에 대한 숫자들의 순열을 모두 검증해야한다.
+
+테스트케이스에서 3 7 5 는 375 357 735 753 537 573이고 3으로 시작할때 중량이 500미만이 되므로 조건을 만족하지 못한다.
+
+총 6개의 순열중 4개만 만족한다.
+
+dfs로 풀이가 가능하다.
+
+```python
+def permute(arr):
+    result = [arr[:]]
+    c = [0] * len(arr)
+    i = 0
+    while i < len(arr):
+        if c[i] < i:
+            # 2.짝수 자리일때 첫번째와 세번째를 교체(312) 4.첫셋교체 (231)
+       
+            if i % 2 ==0:
+                arr[0], arr[i] = arr[i], arr[0]
+           # 1. 첫번째수와 두번째 수를 교체(213) 3. 첫둘교체 (132) 5.첫둘교체(312)
+            else:
+                arr[c[i]], arr[i] = arr[i], arr[c[i]]
+            result.append(arr[:])
+            c[i] += 1
+            i = 0
+        else:
+            c[i] = 0
+            i += 1
+    return result
+```
+
+순열을 출력하는 코드
+
+123 213 312         12바꾸고 23바꾸고
+
+132 231 321		12바꾸고 23바꾸고 12바꾸고
+
+```python
+from itertools import combinations
+
+for i in combinations([1,2,3,4], 2):
+    print(i, end=" ")
+
+# 순열구하는 패키지 함수코드
+```
+
+
+
+```python
+# 순열 구하고 차례로 무게라는 매개변수에 더한다음 4를 빼서 0보다 작다면 답에 포함시키지 않는다.
+
+from itertools import permutations
+n, k = map(int, input().split())
+
+arr = list(map(int, input().split()))
+answer = 0
+for data in permutations(arr, n):
+    # print(data)
+    weight = 0
+    track = True
+    for i in range(n):
+        weight += data[i]
+        weight -= 4
+        if weight < 0:
+            track = False
+            break
+    if track:
+        answer += 1
+
+print(answer)
+```
+
