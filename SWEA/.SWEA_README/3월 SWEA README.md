@@ -6,7 +6,7 @@
 
 3월 알고리즘도 화이팅
 
-1일 1 commit :checkered_flag:
+1일 1 commit :checkered_flag: 
 
 
 
