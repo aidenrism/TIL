@@ -1005,3 +1005,101 @@ for data in permutations(arr, n):
 print(answer)
 ```
 
+
+
+
+
+## 11399_ATM
+
+https://www.acmicpc.net/problem/11399
+
+숫자들을 오름차순으로 정렬해주고
+
+각 인덱스의 길이만큼을 앞에서 부터 더한 다음 그 더해진 값들의 총합을 구하는 문제이다.
+
+
+
+```python
+N = int(input())
+atm = list(map(int,input().split()))
+
+for i in range(N-1):
+    for j in range(N-1):
+        if atm[j+1] < atm[j]:
+            atm[j+1], atm[j] = atm[j], atm[j+1]
+
+total = 0
+for i in range(N):
+    for j in range(i+1):
+        total += atm[j]
+print(total)
+```
+
+
+
+
+
+## 16953_AtoB
+
+https://www.acmicpc.net/problem/16953
+
+
+
+첫번째 숫자에 2를 곱하거나 마지막 자리에 1을 추가하여 두번째 숫자가 되게 만드는 문제다.
+
+dfs, bfs 스택, 큐 로 접근이 가능하다.
+
+
+
+같은 값이면 멈추고 그렇지 않으면서 계산 후의 결과가 두번째 값보다 작다면 해당 계산을 진행하여준다.
+
+
+
+```python
+while que:
+	...
+if i*2<= b:
+    que.append(i*2, cnt+1)
+if int(str(i)+'1') <= b:
+    que.append((int(str(i)+'1'), cnt+1))
+
+
+```
+
+
+
+큐스택을 쓰지 않고 while 조건문으로 해결 가능하다.
+
+거꾸로 생각해야한다.
+
+두번째 숫자의 마지막 자리수가 1이거나 2로 나누어떨어진다면 해당 계산을 진행하여준다. (단 전자의 조건을 먼저 주기)
+
+만약 두개의 케이스 모두 해당되지 않는다거나 첫번째 숫자보다 작아진다면 실패한 것으로 break로 반복문에서 빠져나와 -1 값을 출력시켜준다.
+
+```python
+a, b = map(int, input().split())
+
+cnt = 0
+
+while True:
+    if a == b:
+        cnt += 1
+        break
+    elif (b % 10 != 1 and b % 2 != 0) or b < a:
+        cnt = -1
+        break
+    else:
+        if b % 10 == 1:
+            b //= 10
+            cnt += 1
+        else:
+            b //= 2
+            cnt += 1
+
+print(cnt)
+```
+
+
+
+
+
