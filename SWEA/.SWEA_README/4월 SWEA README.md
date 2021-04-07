@@ -472,10 +472,10 @@ def sol(x):
     ans.append(n)
 
 # 3. 후위연산을 위한 함수
-def inorder(n):
+def postorder(n):
     if n:
-        inorder(left[n])
-        inorder(right[n])
+        postorder(left[n])
+        postorder(right[n])
         # 3-1. 숫자형이면 바로 스택에 삽입
         if type(node[n]) == int:
             ans.append(node[n])
@@ -507,7 +507,7 @@ for tc in range(1, 11):
             n2 = int(nod[1])
         node[n1] = n2
     # 3. 후위연산을 위한 함수 실행
-    inorder(1)
+    postorder(1)
     # 5. 대괄호 제거
     ans = int(ans[0])
 
