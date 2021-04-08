@@ -126,9 +126,9 @@ print(a)# 정렬 후 리스트 출력
 
 
 ```python
-import random # random 메소드 사용을 위해 import
+import random 
 
-a = random.sample(range(1, 10), 5) # 1<= x < 10의 난수 5개 리스트로 생성
+a = random.sample(range(1, 10), 5)
 print(a) # 정렬 전 리스트
 print('')
 def quickSort(a, start, end):# 재귀함수용 함수 선언(리스트, 시작인덱스, 종료인덱스)
