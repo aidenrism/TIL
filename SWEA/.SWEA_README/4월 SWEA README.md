@@ -168,6 +168,12 @@ for tc in range(1, T+1):
 
 
 
+wfost rae
+
+software
+
+sotf aerw
+
 
 
 ## #5174_subtree
@@ -527,4 +533,431 @@ for tc in range(1, 11):
 
 
 
+
+
+
+## #1248_공통조상
+
+https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV15PTkqAPYCFAYD&categoryId=AV15PTkqAPYCFAYD&categoryType=CODE&problemTitle=1248&orderBy=FIRST_REG_DATETIME&selectCodeLang=ALL&select-1=&pageSize=10&pageIndex=1
+
+
+
+![image-20210408172855204](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210408172855204.png)
+
+![image-20210408172949902](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210408172949902.png)
+
+
+
+
+
+```python
+# 5. 서브 트리의 크기를 구하는 함수
+def count(n):
+    global cnt
+    cnt += 1
+    # 자식노드의 값이 있다면 재귀를 통해서 서브트리 카운트
+    if tree[n][0]:
+        for child in tree[n]:
+            count(child)
+
+    # 아래 코드는 재귀에러 발생
+    # for i in tree[n]:
+    #     # 자식노드의 개수만큼 카운팅해준다.
+    #     cnt += 1
+    #     cnt_list.append(i)
+    # # 카운트 리스트에 자식 노드들을 넣어주고 하나씩 빼면서 그 노드의 자식노드들을 append 한다.
+    # while cnt_list:
+    #     n = cnt_list.pop()
+    #     # 자식노드에 연결된 노드들이 없다면 종료한다.
+    #     if tree[n][0]:
+    #         count(n)
+    return cnt
+
+
+T = int(input())
+for tc in range(1, T+1):
+    V, E, n1, n2 = map(int, input().split())
+    # 0 두개로 채워주는 트리
+    tree = [[0 for _ in range(2)] for _ in range(V+1)]
+    node = list(map(int, input().split()))
+
+    # 1. 트리가 비어있으면 부모 자식 정점을 이어주고 있다면 값을 추가해줌
+    for i in range(E*2):
+        if i%2 == 0:
+            if tree[node[i]] == [0, 0]:
+                tree[node[i]] = [node[i+1]]
+            else:
+                tree[node[i]] += [node[i+1]]
+
+    # 2-1. 빈 리스트에 첫번째 정점의 조상들을 넣어준다.
+    anc_node1 = []
+    while True:
+        for i in range(len(tree)):
+            if n1 in tree[i]:
+                anc_node1 += [i]
+                n1 = i
+        if n1 == 1:
+            break
+    # print(anc_node1) # [5, 3, 1]
+
+    # 2-2. 빈 리스트에 두번째 정점의 조상들을 넣어준다.
+    anc_node2 = []
+    while True:
+        for i in range(len(tree)):
+            if n2 in tree[i]:
+                anc_node2 += [i]
+                n2 = i
+        if n2 == 1:
+            break
+    # print(anc_node2) # [11, 6, 3, 1]
+
+
+    # 3. 두 정점의 공통조상을 찾아준다.
+    same_anc = []
+    if len(anc_node1) >= len(anc_node2):
+        for i in anc_node2:
+            if i in anc_node1:
+                same_anc.append(i)
+    else:
+        for i in anc_node1:
+            if i in anc_node2:
+                same_anc.append(i)
+
+    cnt_list = []
+    # 처음으로 만나는 공통조상은 가장 앞의 값이다.
+    n = same_anc[0]
+    cnt = 0
+    # 4. 가장 앞에 있는 공통조상의 서브트리의 크기를 구하는 함수를 실행한다.
+    total = count(same_anc[0])
+
+    # 6. 결과값을 출력한다.
+    print(f'#{tc} {same_anc[0]} {total}')
+
+```
+
+
+
+
+
+왼쪽오른쪽 자식노드로 나눠서 만드는 트리
+
+```python
+   # 2 1 2 5 1 6 5 3 6 4 # 노드 연결
+    tree = [[0] * (n + 2) for _ in range(2)]
+    # print(tree)
+
+    # 1. 2개마다 앞에 값을 인덱스 뒤에값을 해당 인덱스 위치의 값으로 넣는다
+    for i in range(n * 2):
+        if i % 2 == 0:
+            n1, n2 = node[i], node[i + 1]
+            # 2-1. 왼쪽 자식이 없으면 왼쪽부터
+            if tree[0][n1] == 0:
+                tree[0][n1] = n2
+            # 2-2. 있으면 오른쪽도
+            else:
+                tree[1][n1] = n2
+
+    # print(tree)
+#[[0, 6, 1, 0, 0, 3, 4], [0, 0, 5, 0, 0, 0, 0]]
+
+#[[0, 0, 6, 0, 1, 3, 4], [0, 0, 0, 0, 0, 0, 5]]
+```
+
+처럼 만들거나 
+
+
+
+있는 값만 넣는 방식인
+
+```python
+    # 2-1. 부모 인덱스를 기준으로 자식 기록 tree
+    tree = [[] for _ in range(v+1)]
+    # 2-2. 자식 인덱스를 기준으로 부모 기록 tree
+    baby_tree = [0] * (v+1)
+
+    for i in range(e):
+        n1, n2 = edges[2*i], edges[2*i+1]
+        tree[n1].append(n2)
+        baby_tree[n2] = n1
+    # [[], [2, 3], [4], [5, 6], [7], [9, 8], [11, 10], [12], [], [], [], [13], [], []]
+```
+
+트리를 생성하지 않고
+
+
+
+0값을 두개씩 만든 2차원 리스트에 값이 있을 때만 넣는 식으로 
+
+[[0, 0], [2, 3], [4], [5, 6], [7], [9, 8], [11, 10], [12], [0, 0], [0, 0], [0, 0], [13], [0, 0], [0, 0]]
+
+트리를 생성하였다.
+
+
+
+공통조상은 바로 찾아서 추출해주고 공통조상의 subtree의 개수를 계산할 때 함수를 정의하여서 사용하였다.
+
+처음에는 빈 리스트에 넣고 pop() 해주는 방식으로 재귀에러가 나서 헤매었으나 
+
+빈값이 아니라면 그 자식들을 바로 카운트 함수에 넣어주는 재귀방식으로 해결하였다.
+
+
+
+`※ 에러명: RecursionError: maximum recursion depth exceeded` 
+
+>  기존 재귀식의 호출횟수에는 문제가 없었던거 처럼 보이나, 함수내에서 append와 pop을 하면서 스택이 쌓여 파이썬 인터프리터 상에서 재귀 맥시멈값인 1000을 돌파하여 에러가 발생하였다.
+
+
+
+코드를 공유하면서 사람들이 코드를 알아볼 수 있을까 걱정이 되었다.
+
+알고리즘 구현 능력이 향상된다면 사람들이 알아보기 쉽고 간편한 코드를 만들어야겠다. 
+
+(누가봐도 알기 쉬운 변수명, 불필요한 스탭 생략.. 등)
+
+
+
+
+
+## #5215_햄버거 다이어트
+
+
+
+[swea 문제링크](https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWT-lPB6dHUDFAVT)
+
+
+
+![image-20210410203727671](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210410203727671.png)
+
+![image-20210410204844180](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210410204844180.png)
+
+
+
+```python
+def find_max(idx, score, k):
+    global max_score
+
+    if k > L:
+        return
+    if score >= max_score:
+        max_score = score
+
+    if idx == N:
+        return
+    
+    # 첫번째 재귀문이 잘못됨
+    find_max(idx+1, burger[idx][0], burger[idx][1])
+    find_max(idx+1, score + burger[idx][0], k+burger[idx][1])
+
+
+T = int(input())
+N, L = map(int, input().split())
+burger = []
+for _ in range(N):
+    t, k = map(int, input().split())
+    burger.append([t, k])
+print(burger)
+max_score = 0
+find_max(0, 0, 0)
+print(max_score)
+```
+
+
+
+이렇게 작성한다면 각 재료 하나만 있을때와 첫번째재료부터 제한 칼로리 이전까지의 함수만 호출되고 1번없고 2번있고 3번없고 이런식의 조합이 불가능하다.
+
+
+
+그래서 해당 재료를 포함시키지 않는 재귀함수를 아래와 같이 만들어주어야 한다.
+
+```python
+def find_max(idx, score, k):
+    global max_score
+
+    # 제한 칼로리를 넘어서면 멈춘다
+    if k > L:
+        return
+    # 점수가 기존값보다 커지면 최대점수로 바꾼다
+    if score >= max_score:
+        max_score = score
+
+    # 정해놓은 재료만큼 오면 멈춤다
+    if idx == N:
+        return
+
+    # 해당재료를 포함시키지 않을 때
+    find_max(idx+1, score, k)
+    # 해당재료를 포함시켜줄 때
+    find_max(idx+1, score + burger[idx][0], k+burger[idx][1])
+
+
+T = int(input())
+for tc in range(1, T+1):
+    N, L = map(int, input().split())
+    burger = []
+    for _ in range(N):
+        t, k = map(int, input().split())
+        burger.append([t, k])
+    # print(burger)
+    max_score = 0
+    # 아무것도 없을 때부터 시작함 
+    find_max(0, 0, 0)
+    print(f'#{tc} {max_score}')
+```
+
+
+
+
+
+```python
+T = int(input())
+for tc in range(1, T + 1):
+    n, l = map(int, input().split())
+    info = [list(map(int, input().split())) for _ in range(n)]
+ 
+    result = 0
+    # 2의 n승만큼 부분집합을 만든다
+    for i in range(1 << n):
+        # 칼로리와 점수는 리셋 
+        t = k = 0
+        for j in range(n):
+            if i & (1 << j):
+                t += info[j][0]
+                k += info[j][1]
+                # 제한칼로리보다 크면 멈춘다.
+                if k > l:
+                    break
+ 		# 제한칼로리보다 칼로리가 낮은데 점수가 기존점수보다 크면 기존점수 대체시킨다.
+        if k <= l and t > result:
+            result = t
+ 
+    print('#{} {}'.format(tc, result))
+```
+
+비트연산자로 조합의 모든 부분집합의 개수를 구하는 방법.
+
+
+
+메모리는 적게 차지하나 실행시간이 오래걸린다는 단점이 있다.
+
+
+
+
+
+아직 조합, 재귀문, 비트연산에 대한 이해가 부족함을 느꼈다.
+
+그리고 아직 DP에 대해서는 거의 모른다고 생각한다.
+
+미루지 말고 DP에 대한 학습을 해야겠다...
+
+
+
+
+
+## #1240_단순 2진 암호코드
+
+
+
+[문제링크](https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV15FZuqAL4CFAYD&categoryId=AV15FZuqAL4CFAYD&categoryType=CODE&problemTitle=1240&orderBy=FIRST_REG_DATETIME&selectCodeLang=ALL&select-1=&pageSize=10&pageIndex=1)
+
+![image-20210413003159832](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210413003159832.png)
+
+![image-20210413003330081](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210413003330081.png)
+
+![image-20210413003345233](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210413003345233.png)
+
+![image-20210413003356171](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210413003356171.png)
+
+
+
+문제를 이해하는게 쉽지 않았는데, 나만 그런거 같지는 않다..
+
+
+
+여러가지 찾아야 할 것들이 많다고 생각했다.
+
+n개의 줄중에 암호가 있는 줄을 찾아야 했고 m개의 숫자중에 암호가 아닌 숫자를 걸러야 했다.
+
+
+
+이 둘을 찾고나서 진짜 숫자를 찾는 암호를 풀기위해 7개씩 끊어서 숫자를 찾고
+
+그 숫자들이 진짜 암호의 조건에 부합하는지 확인해주는 함수를 통해서 값을 산출하였다.
+
+
+
+```python
+
+# 3. 진짜 숫자를 찾는 함수
+def my_number(n):
+    for i in range(10):
+        if n == number_list[i]:
+            return i
+
+
+# 4. 올바른 코드일 때 코드의 총합을 return 시킴
+def check(n):
+    odd = 0
+    even = 0
+    for i in range(7):
+        if i%2 == 0:
+            odd += n[i]
+        else:
+            even += n[i]
+    # 10으로 나누어 떨어져야 함
+    if (odd*3 + even + n[7]) % 10 == 0:
+        return sum(n)
+    # 코드가 아니면 0
+    else:
+        return 0
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n, m = map(int, input().split())
+    # 0. 암호코드 정보
+    hidden_code = [list(map(int, input())) for _ in range(n)]
+
+    # 0. 숫자정보
+    number_list = [[0, 0, 0, 1, 1, 0, 1], [0, 0, 1, 1, 0, 0, 1], [0, 0, 1, 0, 0, 1, 1],
+                   [0, 1, 1, 1, 1, 0, 1], [0, 1, 0, 0, 0, 1, 1], [0, 1, 1, 0, 0, 0, 1], [0, 1, 0, 1, 1, 1, 1],
+                   [0, 1, 1, 1, 0, 1, 1], [0, 1, 1, 0, 1, 1, 1], [0, 0, 0, 1, 0, 1, 1]]
+
+    # 1-1. 값이 들어있는 행찾기
+    my_i = 0
+    # 1-1. 시작할 위치를 찾기 위해 마지막 1 뒤에 0이 몇개있는지 확인하기
+    emp = []
+    for i in range(n):
+        for j in range(m-1,-1,-1):
+            if hidden_code[i][j] == 1:
+                emp += [j]
+                my_i = i
+                break
+    # 1-1. 값이 들어있는 행찾기
+    # print(my_i)
+
+    # 1-1. 버려지는 숫자들
+    # print(emp)
+
+    # 1-2. 순회를 시작할 위치
+    # print(m - 56 - (m - emp[0] - 1))
+    fr = m - 56 - (m - emp[0] - 1)
+    # print(fr)
+
+    # 2. 진짜 코드 찾기
+    code = []
+    # 8개의 숫자
+    for i in range(8):
+        number = []
+        # 7개씩 끊어서 읽기
+        for j in range(fr+i*7, fr+i*7+7):
+            number.append(hidden_code[my_i][j])
+        # print(number)
+
+        # 2-1. 실제 숫자를 찾는 함수를 실행시켜서 code에 append
+        code.append(my_number(number))
+
+    # 5. 결과 값 출력
+    print(f'#{tc} {check(code)}')
+
+```
 
