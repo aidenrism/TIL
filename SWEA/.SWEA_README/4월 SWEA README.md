@@ -961,3 +961,372 @@ for tc in range(1, T+1):
 
 ```
 
+
+
+
+
+## #5185_이진수
+
+
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYDLaK1kMDFAVT
+
+![image-20210413114017869](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210413114017869.png)
+
+
+
+변환에 있어서 숙달되지 않았다.
+
+숫자는 join이 되지 않는다.
+
+'3' < '4' 실수로 된 숫자끼리 비교가 가능하다.
+
+
+
+```python
+# 2. 문자라면 16진수로
+def AtoH(c):
+    # (9 미만으로 주어서 테케 3개만 맞음)
+    if c <= '9':
+        return ord(c) - ord('0')
+    else:
+        return ord(c) - ord('A') + 10
+
+# 3. 16진수는 2진수로
+def HtoD(n):
+    for i in range(len(asc)):
+        if n == i:
+            return asc[i]
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n, m = input().split()
+    # n은 숫자로 변환
+    n = int(n)
+
+    asc = [[0, 0, 0, 0],  #2진법 - 0(16진법)
+           [0, 0, 0, 1],  #2진법 - 1(16진법)
+           [0, 0, 1, 0],  #2진법 - 2(16진법)
+           [0, 0, 1, 1],  #2진법 - 3(16진법)
+           [0, 1, 0, 0],  #2진법 - 4(16진법)
+           [0, 1, 0, 1],  #2진법 - 5(16진법)
+           [0, 1, 1, 0],  #2진법 - 6(16진법)
+           [0, 1, 1, 1],  #2진법 - 7(16진법)
+           [1, 0, 0, 0],  #2진법 - 8(16진법)
+           [1, 0, 0, 1],  #2진법 - 9(16진법)
+           [1, 0, 1, 0],  #2진법 - A(16진법) - 10
+           [1, 0, 1, 1],  #2진법 - B(16진법) - 11
+           [1, 1, 0, 0],  #2진법 - C(16진법) - 12
+           [1, 1, 0, 1],  #2진법 - D(16진법) - 13
+           [1, 1, 1, 0],  #2진법 - E(16진법) - 14
+           [1, 1, 1, 1]]  #2진법 - F(16진법) - 15
+
+    ans = []
+    # 1. 문자 -> 16진수 -> 2진수로 변환해주는 함수 2개를 통해서 빈 리스트에 extend
+    for i in range(n):
+        # extend 로 하면 리스트로 안 집어넣고 원소로 집어넣음
+        ans.extend(HtoD(AtoH(m[i])))
+
+    # 4. 숫자는 join이 안되므로 문자열 리스트로 변환시킨 다음에 join
+    ans = ''.join(list(map(str, ans)))
+    print(f'#{tc} {ans}')
+
+```
+
+
+
+
+
+## #5186_이진수2
+
+
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYDLaK1kMDFAVT
+
+![image-20210413135402304](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210413135402304.png)
+
+
+
+소수를 이진표기로 어떻게 하는지 알아야 한다.
+
+다행히 문제에 짧은 설명이 있다.
+
+이해가 안된다면 한 번 다른 숫자를 이진표기로 해보면 좋은것 같다.
+
+0.1로 이진 표기가 가능한 0.5는 2의 -1승이다.
+
+만약 2를 곱해서 1이 된다면 더 이상 해줄 것이 없다.
+
+
+
+2를 곱해서 1이 되면 이진표기를 종료하는 함수를 만든다.
+
+만약 1을 넘는다면 1을 빼주고 다시 소수점만 함수를 돌려주고,
+
+1이 넘지 않아도 다시 2를 곱하며 1이 되는지 봐준다.
+
+
+
+반복하다보면 1이 넘는 순간이 오고 넘는다면 그때 해당 자리수에 1이 들어가게 된다.
+
+ex) 0.2는 2를 세번곱해야 1이 넘는다  -> 0.001 소수점 3째 자리에 1이 찍힌다.
+
+
+
+해당 자리수가 지날 때마다 카운팅을 해주며 만약 12가 넘어가면 'overflow'를 출력해준다.
+
+
+
+```python
+# 2. 2를 곱해가면서 1이 넘으면 해당 위치(-1승..-2승..)에 1을 집어넣는 이진표기법
+def FtoB(n):
+    global cnt, result
+    new_n = n * 2
+    # 결과값에 저장
+    result += str(int(new_n))
+    # 자리수를 카운팅
+    cnt += 1
+    # 1이 되면 끝
+    if new_n == 1:
+        return
+    # 1이 넘으면 소수부분만 재귀로 다시 실행
+    else:
+        n = new_n - int(new_n)
+        FtoB(n)
+    # 12번째 자리를 넘으면 오버플로우 출력
+    if cnt > 12:
+        result = 'overflow'
+        return
+
+
+T = int(input())
+for tc in range(1, T+1):
+    # 0. 실수값을 입력받는다
+    num = float(input())
+
+    # 0. 자리수와 출력문의 초기값
+    cnt = 0
+    result = ''
+    # 1. 이진수로 변환시키면서 자리수를 저장하면서 세어주는 함수
+    FtoB(num)
+    # 3. 결과값 출력
+    print(f'#{tc} {result}')
+```
+
+
+
+
+
+
+
+## #10726_이진수표현
+
+
+
+https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AXRSXf_a9qsDFAXS&categoryId=AXRSXf_a9qsDFAXS&categoryType=CODE&problemTitle=10726&orderBy=FIRST_REG_DATETIME&selectCodeLang=ALL&select-1=&pageSize=10&pageIndex=1
+
+
+
+![image-20210413153201956](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210413153201956.png)
+
+
+
+이번에는정수를 이진표기로 바꿔주는 함수를 만들어야 했다.
+
+바꿔주고 나서 n개의 비트가 1로 되어있는지 확인하면 되었다.
+
+
+
+```python
+# 2. 함수 실행
+def OnOff(num):
+    global result
+    # 값이 0이면 while 문에 안 들어가므로 바로 'OFF'
+    if not num:
+        return 'OFF'
+    # 임시로 이진표기의 비트를 뒤에서부터 담아주는 리스트
+    temp = []
+    while num:
+        q = num//2
+        remain = num%2
+        # 2로 나눈 나머지를 임시 리스트에 삽입
+        temp += [remain]
+        # 2이상으로 해주면 마지막 2로 나눴을 때 나머지가 안 더해짐
+        if q >= 1:
+            num = q
+        # 처음부터 n개까지 더해보면 모두 1로 채워졌는지 알 수 있음
+        else:
+            if sum(temp[:n]) == n:
+                return 'ON'
+            else:
+                return 'OFF'
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n, m = map(int, input().split())
+    result = []
+    # 1. 숫자 m의 이진표기법 마지막 n개의 비트가 모두 켜져있는지 확인하는 함수
+    ans = OnOff(m)
+    # 결과값 출력
+    print(f'#{tc} {ans}')
+```
+
+
+
+
+
+## #3752_가능한 시험점수
+
+
+
+https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWHPkqBqAEsDFAUn
+
+
+
+![image-20210413173836845](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210413173836845.png)
+
+![image-20210413173848933](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210413173848933.png)
+
+
+
+햄버거 문제처럼  가능한 부분집합을 모두 구한다음 set을 이용하여 중복을 제거해주려고 했는데
+
+runtime error가 발생하여서 실행시간과 메모리를 확인하였는데 메모리가 다른 정답자에 비해서 4배정도 높았고 실행시간은 6배 높았다.
+
+
+
+그래서 재귀를 사용하지 않고 잘 모르는 부분인 DP를 활용하여 풀었다.
+
+ 이미 있는 점수들과 꺼내는 score의 가능한 조합을 살펴볼 때는 마지막까지 저장된 점수들의 길이 까지만 for 문을 돌려서 변수 t를 꺼내줘야 한다.
+
+그렇지 않으면 마지막 append 부분에서 계속 추가되기 때문에  for 문이 멈추지 않는다.
+
+
+
+dp는 분할정복과 비슷하지만 작은 문제의 중복이 일어나는지 일어나지 않는지에 차이가 있다.
+
+dp는 모든 작은 문제를 한번만 풀어야 하고 정답은 구한 작은 문제는 메모(저장)을 해놓는다.
+
+
+
+```python
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+    score_list = list(map(int, input().split()))
+
+    # 가능한 점수의 부분집합들
+    total_list = [0]
+    # 0점은 자동으로 가능하므로 1을 할당
+    check = [1] + [0] * sum(score_list)
+
+    # 1. 점수를 꺼내면서 이미 구한 부분점수들과 조합을 해줌
+    for score in score_list:
+        end = len(total_list)
+        # 1-2. 현재 있는점수까지만 해야함 (밑에서 append 하기 때문에 계속 추가됨)
+        for t in total_list[:end]:
+            # 1-3. 만약 이미 그 점수가 있다면 제외시킴(중복x)
+            if not check[score+t]:
+                # 1-4. 방문을 기록
+                check[score+t] = 1
+                # 1-5. 가능한 부분집합들에 추가해줌 
+                total_list.append(score+t)
+
+    # print(total_list)
+    ans = len(total_list)
+    # 2. 결과값 출력 
+    print(f'#{tc} {ans}')
+
+```
+
+
+
+
+
+
+
+## #1244_최대상금
+
+
+
+https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV15Khn6AN0CFAYD
+
+
+
+![image-20210414230153798](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210414230153798.png)![image-20210414230213506](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210414230213506.png)
+
+
+
+시간초과를 피하려면 어떻게 풀어야 할 지 잘 모르겠어서 다른 사람들의 풀이를 참고했다.
+
+경우의 수를 돌려주며 최대값이 나올 때마다 기존 값과 대체 시켜주었다.
+
+카운팅 횟수가 남았는데 이미 저장된 최대값이 나온다면 구성된 숫자들이 동일한 숫자들인지 확인해주고
+
+만약 같은 숫자들이 아니라면 마지막 값들을 바꾸어주었다.
+
+
+
+```python
+# 1. 몇번 바꿨는지 세주면서 경우의 수를 돌린다
+def dfs(idx, cnt):
+    global result
+    # 1-1. 바꿀 수 있는 횟수가 남았다면
+    if cnt:
+        # 1-3. 최대값이 나와도 내부에서 교체해줌
+        if lst_num == max_lst:
+            # 매개변수 할당 (동일값들로 되어있는지, 만약 동일값들이면 카운팅 남아도 바꿔줄 필요없음)
+            c = 0
+            for i in range(len(lst_num) - 1):
+                if lst_num[i] == lst_num[i + 1]:
+                    c = 1
+            # 동일한 값이 없다면 카운팅이 남았을 때 결과가 달라지므로 남은 카운팅 횟수만큼 위치를 바꿔줌
+            if c == 0:
+                while cnt:
+                    lst_num[-1], lst_num[-2] = lst_num[-2], lst_num[-1]
+                    cnt -= 1
+            # 마지막 값을 저장
+            temp = int(''.join(lst_num))
+            # 마지막 값이 기존값보다 크면 마지막 값을 출력해줌
+            if result < temp:
+                result = temp
+            return
+        # 1-2.
+        else:
+            for i in range(idx, len(lst_num) - 1):
+                for j in range(i, len(lst_num)):
+                    # 내 뒤에 값이 나보다 크면 교체시도
+                    if int(lst_num[i]) < int(lst_num[j]):
+                        lst_num[i], lst_num[j] = lst_num[j], lst_num[i]
+                        # 카운팅 빼고 재귀 (만약 카운팅이 끝났다면 기존값과 비교해준다)
+                        dfs(idx + 1, cnt - 1)
+                        # 원상 복귀
+                        lst_num[i], lst_num[j] = lst_num[j], lst_num[i]
+
+    # (카운팅이 끝났다면 dfs는 여기로) 기존값과 비교
+    else:
+        temp = int(''.join(lst_num))
+        if result < temp:
+            result = temp
+        return
+
+
+T = int(input())
+
+for tc in range(1, 1 + T):
+    num, change = input().split()
+
+    # 0. 순회를 위해서 리스트 변환
+    lst_num = list(num)
+    change = int(change)
+    # 0. 최대값 저장
+    max_lst = sorted(lst_num)[::-1]
+    result = 0
+    # 1. dfs로 경우의 수를 찾아줌
+    dfs(0, change)
+
+    print(f'#{tc} {result}')
+```
+
