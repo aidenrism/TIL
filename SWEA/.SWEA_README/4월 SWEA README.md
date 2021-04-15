@@ -1122,6 +1122,8 @@ for tc in range(1, T+1):
 
 ## #10726_이진수표현
 
+(응용)
+
 
 
 https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AXRSXf_a9qsDFAXS&categoryId=AXRSXf_a9qsDFAXS&categoryType=CODE&problemTitle=10726&orderBy=FIRST_REG_DATETIME&selectCodeLang=ALL&select-1=&pageSize=10&pageIndex=1
@@ -1179,7 +1181,7 @@ for tc in range(1, T+1):
 
 ## #3752_가능한 시험점수
 
-
+(응용)
 
 https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWHPkqBqAEsDFAUn
 
@@ -1248,6 +1250,8 @@ for tc in range(1, T+1):
 
 
 ## #1244_최대상금
+
+(완전탐색)
 
 
 
@@ -1328,5 +1332,320 @@ for tc in range(1, 1 + T):
     dfs(0, change)
 
     print(f'#{tc} {result}')
+```
+
+
+
+
+
+## #5188_최소합
+
+(완전탐색)
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYDrI61lYDFAVT
+
+
+
+
+
+![image-20210415160930191](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210415160930191.png)
+
+![image-20210415160943629](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210415160943629.png)
+
+
+
+
+
+완전탐색을 이용하여 가능한 모든 경로를 살피고 경로를 이동하면서 그 위치의 인덱스를 더해서 
+
+도착점에 도착했을 때 최소합이 되는 경로를 찾는 문제이다.
+
+델타이동의 사용이 간간이 하다보니 아직 숙달은 안되었었다.
+
+
+
+방문여부를 체크는 하는데 다시 빼줄 생각을 못해서 도착점으로 가지 않아서 1차로 헤매었다.
+
+
+
+2차로는 경로를 구하긴 했는데 테케는 맞지만 시간초과 오류가 떠서 10개중 7개만 맞았다.
+
+모든 경우를 구하면 안되고  이미 전에 구해진 경로의 총합보다 커졌다면 탐색 중간에라도 그만 가는게 맞다.(효율적이다?)
+
+ 알고리즘은 생각할 게 많다 
+
+
+
+```python
+# 3. 갈 수 있는 범위인지 확인해주는 함수
+def IsSafe(col, row):
+    return 0 <= col < n and 0 <= row < n
+
+
+# 2. 아래 오른쪽을 재귀로 이동 (깊이 우선 탐색)
+def BottomRight(col, row):
+    global temp
+
+    # 이미 마지막 총합보다 커졌으면 여기까지.. (없으면 시간초과)
+    if route[-1] < temp:
+        return
+
+    # 마지막값에 도달했다면 그때의 총합을 저장
+    if col == n-1 and row == n-1:
+        route.append(temp)
+        return
+    # 하하하 우우우
+    for dir in range(2):
+        n_col = col + dc[dir]
+        n_row = row + dr[dir]
+        # 가능한 범위고 아직 안갔더라면 진행
+        if IsSafe(n_col, n_row) and (n_col, n_row) not in visited:\
+            # 방문체크
+            visited.append((n_col, n_row))
+            # 그 지점의 값 더하기
+            temp += lst[n_col][n_row]
+            # 다시 우 하 로 이동하는 함수 실행
+            BottomRight(n_col, n_row)
+            # 여기까지만 해주면 도착점은 이미 갔던곳이라서 다시 안감
+            # 방문한곳과 그 위치의 값들을 삭제
+            visited.remove((n_col, n_row))
+            temp -= lst[n_col][n_row]
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+    lst = [list(map(int, input().split())) for _ in range(n)]
+
+    # 0. 방문여부와 최종합들을 담을 빈 리스트 할당
+    visited = []
+    route = [9999]
+    # 0. 초기값 할당
+    temp = lst[0][0]
+    # 아래 오른쪽 순으로 이동
+    dc = [1, 0]
+    dr = [0, 1]
+    # 1. 아래 오른쪽으로 돌면서 마지막까지 가는 모든 경로를 구해주는 함수
+    BottomRight(0, 0)
+
+    # print(route)
+    # print(len(route)) #7,6,9 vs 15 25 51
+    # 4. 가본 경로중에 가장 최소값 찾기 (생략)
+    # min_route = min(route)
+    # min_route = merge_sort(route)[0]
+    # print(f'#{tc} {min_route}')
+
+    # 5. 결과값 출력 (가장 마지막 인덱스가 최소값이다)
+    print(f'#{tc} {route[-1]}')
+```
+
+
+
+
+
+
+
+## #5189_전자카트
+
+(완전탐색)
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYDrI61lYDFAVT
+
+![image-20210415175213778](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210415175213778.png)![image-20210415175229512](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210415175229512.png)
+
+첫값과 마지막값은 항상 고정되어 있으므로 
+
+인덱스 1을 제외한 숫자들로 순열을 구해서 총합을 구해주었다.
+
+더 빠르게? 하려면 총합을 구할 때 이미 전 총합보다 크다면 그만 구해주는 조건을 집어넣으면 좋을 것 같다.
+
+
+
+```python
+# 3. 머지소트(병합정렬)
+def merge_sort(arr):
+    n = len(arr)
+    if n < 2:
+        return arr
+    else:
+        mid = n //2
+        left = merge_sort(arr[:mid])
+        right = merge_sort(arr[mid:])
+        new_arr = []
+        l = r = 0
+        while l < mid and r < n - mid:
+            if left[l] < right[r]:
+                new_arr.append(left[l])
+                l += 1
+            else:
+                new_arr.append(right[r])
+                r += 1
+        return new_arr + left[l:] + right[r:]
+
+
+# 2. 만든 순열을 사용해 해당 위치의 값 더해주기
+def GolfArea(arr):
+    # 첫번째 값과 마지막값은 초기에 넣어줌
+    temp = area[0][arr[0]] + area[arr[-1]][0]
+    # 순열 돌린거 집어넣으며 임시변수에 더해주기
+    for i in range(len(arr)-1):
+        temp += area[arr[i]][arr[i+1]]
+    # 총합 리스트
+    total.append(temp)
+
+
+# 1. 순열만들기
+def perm(idx, length):
+    # 전체 길이만큼 왔으면 해당 위치의 값을 더해주는 함수 실행
+    if idx == length:
+        # print(arr)
+        GolfArea(arr)
+    # 자리를 바꿔주며 순열을 만듦
+    else:
+        for change in range(idx, length):
+            arr[idx], arr[change] = arr[change], arr[idx]
+            perm(idx+1, length)
+            arr[idx], arr[change] = arr[change], arr[idx]
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+    # 2차원리스트의 골프장
+    area = [list(map(int, input().split())) for _ in range(n)]
+    # 0. 첫번째 값을 제외하고 순열 고고
+    arr = [i for i in range(1, n)]
+    # 0. 배터리 소비량의 총합을 담을 리스트
+    total = []
+    # 1. 순열돌리는 함수 실행
+    perm(0, n-1)
+
+    # 3. 병합정렬후 가장 작은 최소값 저장
+    min_total = merge_sort(total)[0]
+    # 4. 결과값 출력
+    print(f'#{tc} {min_total}')
+```
+
+
+
+
+
+## #5201_컨테이너운반
+
+(그리디)
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYEGw61n8DFAVT
+
+
+
+![image-20210416000135171](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210416000135171.png)
+
+![image-20210416000142533](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210416000142533.png)
+
+
+
+내림차순으로 정렬하고 차례로 비교해주면서 실을수 있다면 싣고 그 값을 제거해준다.
+
+
+
+```python
+T = int(input())
+for tc in range(1, T+1):
+    n, m = map(int, input().split())
+    weight = list(map(int, input().split()))
+    truck = list(map(int, input().split()))
+
+    # 1. 크기순으로 화물무게와 트럭 적재용량을 세운다 (내림차순)
+    weight = sorted(weight)[::-1]
+    truck = sorted(truck)[::-1]
+    # 2. 실리는 화물 리스트
+    load = []
+
+    for i in range(n):
+
+        for j in range(len(truck)):
+            # 운반 가능한 무게면 append
+            if weight[i] <= truck[j]:
+                load.append(weight[i])
+                # 운반후에 그 트럭은 remove
+                truck.remove(truck[j])
+                break
+    # 3. 결과 값 출력
+    print(f'#{tc} {sum(load)}')
+
+```
+
+
+
+## #5103_베이비진 게임
+
+(그리디)
+
+
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYEGw61n8DFAVT
+
+
+
+![image-20210416003914916](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210416003914916.png)
+
+
+
+run 체크할 때 (lst[i] and lst[i+1] and lst[i+1]) >= 1
+
+이라고 해서 테케 1번이 2로 나와서 왜그러나 싶었다. 
+
+
+
+run 변수가 있으면 코드 제출이 되지 않았다..
+
+
+
+```python
+# 2. 체크하는 함수
+def check(lst):
+    global runs, triplet
+    for i in range(len(lst)):
+        # 세게면 트리플렛
+        if lst[i] == 3:
+            triplet += 1
+        # 인덱스가 마지막 두개가 아니라면 run 체크
+        if i < len(lst)-2:
+            if (lst[i] and lst[i+1] and lst[i+2]) >= 1:
+                runs += 1
+    # run이나 triplet이 있다면 승리
+    if runs or triplet:
+        return 1
+    else:
+        return 0
+
+
+T = int(input())
+for tc in range(1, T+1):
+    card = list(map(int, input().split()))
+    runs = 0
+    triplet = 0
+    player1 = [0]*10
+    player2 = [0]*10
+    ans = 0
+
+    # 1. 플레이어1과 2에게 돌아가면서 카드주기
+    for i in range(12):
+        if i%2 == 0:
+            player1[card[i]] += 1
+            # 한장 줄 때 마다 체크, 만약 run이나 triplet이 있다면 멈춘다
+            if check(player1):
+                ans = 1
+                break
+        else:
+            player2[card[i]] += 1
+            # 한장 줄 때 마다 체크, 만약 run이나 triplet이 있다면 멈춘다
+            if check(player2):
+                ans = 2
+                break
+    # 3. 결과출력
+    print(f'#{tc} {ans}')
+
+
 ```
 
