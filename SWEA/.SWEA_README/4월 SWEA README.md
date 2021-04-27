@@ -1399,7 +1399,7 @@ def BottomRight(col, row):
         n_col = col + dc[dir]
         n_row = row + dr[dir]
         # 가능한 범위고 아직 안갔더라면 진행
-        if IsSafe(n_col, n_row) and (n_col, n_row) not in visited:\
+        if IsSafe(n_col, n_row) and (n_col, n_row) not in visited:
             # 방문체크
             visited.append((n_col, n_row))
             # 그 지점의 값 더하기
@@ -1648,4 +1648,1080 @@ for tc in range(1, T+1):
 
 
 ```
+
+
+
+## #2819_격자판에 숫자 이어 붙이기
+
+
+
+https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV7I5fgqEogDFAXB
+
+
+
+![image-20210417010407777](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210417010407777.png)
+
+![image-20210417010417088](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210417010417088.png)
+
+
+
+알고리즘 풀면 시간이 참 잘간다.. 
+
+푸는 속도가 오래 걸리는 덕이다.
+
+
+
+잠깐 설명들은대로 dc dr을 만들지 않고 함수안에 i+1, i-1을 넣어 조정해주려고 하였는데 답이 잘 나오지 않아서 델타이동을 사용해 풀었다.
+
+만약  set함수를 쓰지 않는다면 시간이 10배 이상 걸려서 그만큼 set함수가 유용하다는 것을 알게 되었다..
+
+
+
+백트래킹과 dfs 둘다 재귀 호출 형태로 구현되어 차이점이 헷갈렸는데, 두 알고리즘은 사용목적에 차이가 있고 
+
+백트래킹은 일단 가보고 후보해가 되지않으면 다음 단계로 진행하지 않는다.
+
+반면 dfs는 완전탐색을 기본으로 하는 그래프 순회 기법으로 모든 노드를 방문한다.
+
+
+
+```python
+# 3. 해당 위치를 포함해 더해가면서 7개가 되면 셋에 더해주는 함수 실행
+def make_seven(n, c, r):
+        global unique
+        if len(n) == 7:
+            # 셋 함수에 더하기 
+            unique.add(n)
+            return
+        # 델타이동을 해주며 사방면 탐색
+        for dir in range(4):
+            n_col, n_row = c + dc[dir], r + dr[dir]
+            # 지정된 범위 내에서라면 실행
+            if 0 <= n_col < 4 and 0 <= n_row < 4:
+                make_seven(n+grid[n_col][n_row], n_col, n_row)
+
+
+T = int(input())
+for tc in range(1, T+1):
+    # 0. 이차원 리스트
+    grid = [list(input().split()) for _ in range(4)]
+    # print(grid)
+    # 1. set함수로 중복을 막아준다.
+    unique = set()
+    dc = (0, 0, -1, 1)
+    dr = (-1, 1, 0, 0)
+    # 2. 모든 곳을 한번씩 방문하여준다.
+    for c in range(4):
+        for r in range(4):
+            # 3. 해당 위치를 포함해 더해가면서 7개가 되면 셋에 더해주는 함수 실행
+            make_seven(grid[c][r], c, r)
+    # 4. 결과값 출력
+    print(f'#{tc} {len(unique)}')
+
+
+
+
+# set을 쓰지 않으면 시간 10배 더 걸림
+
+#
+# def make_seven(n, c, r):
+#     global route
+#     # route += grid[c][r]
+#     if len(n) == 7:
+#         if n not in emp:
+#             emp.append(n)
+#         return None
+#     for dir in range(4):
+#         n_col, n_row = c + dc[dir], r + dr[dir]
+#         if 0 <= n_col < 4 and 0 <= n_row < 4:
+#             make_seven(n + grid[n_col][n_row], n_col, n_row)
+#             # route = route[::-1]
+#
+# T = int(input())
+# for tc in range(1, T + 1):
+#     grid = [list(input().split()) for _ in range(4)]
+#     # print(grid)
+#     emp = []
+#     route = ''
+#     # unique = set()
+#     dc = (0, 0, -1, 1)
+#     dr = (-1, 1, 0, 0)
+#     for c in range(4):
+#         for r in range(4):
+#             make_seven(grid[c][r], c, r)
+#
+#     print(f'#{tc} {len(emp)}') #16488
+```
+
+
+
+
+
+## #5204_병합정렬
+
+
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYFsQq11kDFAVT
+
+
+
+![image-20210419142542522](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210419142542522.png)![image-20210419142600381](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210419142600381.png)
+
+
+
+몇번 해봤던 병합정렬인데 조금 헷갈렸다..
+
+길이가 2미만 일 때 return 값에 n을 안 넣어놔서 정렬이 안되었었다.
+
+정렬시켜줄 때 남은 거 더해주는 방법은 if else문으로 분기해도 되고 그냥 return에서 한번에 더해주어도 된다.
+
+
+
+```python
+# 1. 병합정렬로 정렬된 리스트만들기
+def merge_sort(n):
+    global cnt
+    # 1-1. 길이가 2보다 작다면 그 값을 반환
+    if len(n) < 2:
+        return n
+    # 1-2. 길이가 2이상이라면 2보다 작을 때 까지 반으로 나눈다
+    else:
+        mid = len(n)//2
+        N = len(n)
+        left = n[:mid]
+        right = n[mid:N]
+        new_lst = []
+        # 마지막까지 반으로 나누기
+        left = merge_sort(left)
+        right = merge_sort(right)
+
+        # 1-3. 나눈값들을 인덱스 처음부터 비교해가면서 더 작은값 새로운 리스트에 더해주기
+        l = r = 0
+        # 1-4. 나눈값중에 왼쪽 끝값이 더 크다면 cnt로 세어주기
+        if left[-1] > right[-1]:
+            cnt += 1
+        while l < len(left) and r < len(right):
+            if left[l] < right[r]:
+                new_lst.append(left[l])
+                l += 1
+            else:
+                new_lst.append(right[r])
+                r += 1
+
+        # 1-5. 남은거 더해주기
+        if l < len(left):
+            new_lst.extend(left[l:])
+        else:
+            new_lst.extend(right[r:])
+
+        # 1-6. 정렬된 리스트를 차례로 반환
+        return new_lst
+        # return new_lst + left[l:] + right[r:]
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+    lst = list(map(int, input().split()))
+    cnt = 0
+    # 1. 병합정렬로 정렬된 리스트만들기
+    merge_lst = merge_sort(lst)
+
+    # print(cnt)
+    # lst[len(lst)//2]
+
+    # 2. 병합정렬로 정렬된 리스트의 중간값
+    mid_num = merge_lst[len(lst)//2]
+
+    # 3. 결과값 출력
+    print(f'#{tc} {mid_num} {cnt}')
+```
+
+
+
+
+
+
+
+## #5205_퀵정렬
+
+
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYFsQq11kDFAVT
+
+
+
+![image-20210419172120493](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210419172120493.png)
+
+
+
+완성코드:
+
+
+
+재귀없이 1회 퀵정렬
+
+```python
+def quick_sort(numbers):
+    if len(numbers) <= 1:
+        return numbers
+
+    pibut = numbers[0]
+    left = []
+    right = []
+
+    for i in range(1, len(numbers)):
+        if numbers[i] < pibut:
+            left.append(numbers[i])
+        else:
+            right.append(numbers[i])
+    return [left, pibut, right]
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+    lst = list(map(int, input().split()))
+    print(quick_sort(lst))
+```
+
+
+
+재귀적용
+
+```python
+def quick_sort(numbers):
+    if len(numbers) <= 1:
+        return numbers
+
+    pibut = numbers[0]
+    left = []
+    right = []
+
+
+    for i in range(1, len(numbers)):
+        if numbers[i] < pibut:
+            left.append(numbers[i])
+        else:
+            right.append(numbers[i])
+
+    sorted_left = quick_sort(left)
+    sorted_right = quick_sort(right)
+
+    return [sorted_left, pibut, sorted_right]
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+    lst = list(map(int, input().split()))
+    print(quick_sort(lst))
+```
+
+출력:
+
+[[[], 1, [1]], 2, [[], 2, [3]]]
+[[[[[], 1, [[], 2, [3]]], 4, []], 5, [6]], 7, [[[8], 9, []], 10, []]]
+
+대괄호 처리해줘야함.
+
+
+
+테스트케이스 10개중 9개 성공
+
+```python
+# 1. 퀵소트 함수적용 
+def quick_sort(numbers):
+    # 길이가 1보다 작으면 숫자 반환 (빈 값도 고려)
+    if len(numbers) <= 1:
+        return numbers
+    # 기준값은 첫번째 인덱스
+    pibut = numbers[0]
+    left = []
+    right = []
+
+    # 첫번째 인덱스를 기준으로 두번째부터 끝까지 pibut보다 작으면 왼쪽리스트로 같거나크면 오른쪽리스트로 append
+    for i in range(1, len(numbers)):
+        if numbers[i] < pibut:
+            left.append(numbers[i])
+        else:
+            right.append(numbers[i])
+            
+    # 왼쪽 오른쪽으로 1회 정렬된 리스트를 첫번째 길이가 1보다 작거나같냐는 if문에 걸릴 때 까지 재귀
+    sorted_left = quick_sort(left)
+    sorted_right = quick_sort(right)
+    
+    # 리스트로 출력하기 때문에 리스트 안에 대괄호 제거를 위해 *추가해서 결과 반환 
+    return [*sorted_left, pibut, *sorted_right]
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+    lst = list(map(int, input().split()))
+    # 1. 퀵소트 함수적용 
+    sorted_lst = quick_sort(lst)
+    
+    # 2. 결과값 출력(중간값)
+    print(f'#{tc} {sorted_lst[len(sorted_lst)//2]}')
+```
+
+
+
+파티션 적용..
+
+왼쪽 원소들이 피봇보다 모두 작을 때와 그렇지 않을 때  잘 구분해서 조건 줘야함
+
+모두작다면 그 이후인 right를 피봇으로 잡고 좌우를 정렬해준다
+
+그렇지 않다면 left쪽의 큰값과 right쪽의 작은값을 스왑하고 왼쪽으로 이동한 right에서부터 피봇으로 정해주고 다시 소팅한다.
+
+기존의 퀵소트에 파티션 개념이 들어갔는데 이해가 쉽지 않다 :sweat_smile:
+
+```python
+# 1. 퀵소트 함수적용
+def quick_sort(numbers, s, e):
+    # s가 e보다 커질 때 리턴
+    if s >= e:
+        return
+    # 기준값은 중간인덱스
+    pivot = (s+e)//2
+    left = s
+    right = e
+
+    # 피봇보다 큰값과 피봇보다 작은 값을 찾을 때까지 left는 1 더해주고 right는 1 빼줌
+    while left < right:
+        while numbers[left] < numbers[pivot] and left < right:
+            left += 1
+        while numbers[right] >= numbers[pivot] and left < right:
+            right -= 1
+
+        if left < right:
+            # 왼쪽원소들이 다 작을 때
+            if left == pivot:
+                # right가 피봇
+                pivot = right
+            # 큰 left와 작았던 right를 서로 교환
+            numbers[left], numbers[right] = numbers[right], numbers[left]
+    # 피봇과 right의 스왑
+    numbers[pivot], numbers[right] = numbers[right], numbers[pivot]
+
+    # 새로운 피봇을 기준으로 좌우 퀵소트
+    quick_sort(numbers, s, right-1)
+    quick_sort(numbers, right+1, e)
+
+
+
+T = int(input())
+for tc in range(1, T + 1):
+    n = int(input())
+    lst = list(map(int, input().split()))
+
+    # 1. 퀵소트 함수적용
+    quick_sort(lst, 0, n-1)
+
+    # print(lst)
+    # 2. 결과값 출력(중간값)
+    print(f'#{tc} {lst[n//2]}')
+
+
+```
+
+
+
+
+
+## #5207_이진탐색
+
+
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYFsQq11kDFAVT
+
+
+
+![image-20210420013843315](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210420013843315.png)
+
+![image-20210420013855742](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210420013855742.png)
+
+
+
+
+
+리스트들이 미리 정렬되어 있는지 확인해야 한다.
+
+직전에 같은 방향을 탐색했는지 확인할 때는 하나의 변수로 체크하는게 안전하다..
+
+
+
+```python
+# 2. 이진탐색 함수
+def binary_search(lst, num):
+    # 초기값들
+    left = 0
+    right = n-1
+
+    # is_left = False
+    # is_right = False
+    lr_check = 0
+
+    result = 0
+    # 둘이 만나기 전까지 반복
+    while left <= right:
+        mid = (left+right)//2
+        # m값이라면 찾았으니 1을 반환
+        if A[mid] == num:
+            result = 1
+            return result
+        # 원소가 m보다 작다면 오른쪽을 이동시켜 left로 체크
+        elif A[mid] > num:
+            if lr_check == -1:
+                return result
+            # is_left = True
+            lr_check = -1
+            right = mid - 1
+
+
+        # 원소가 m보다 크다면 왼쪽을 이동시켜 right 체크
+        elif A[mid] < num:
+            if lr_check == 1:
+                return result
+            # is_right = True
+            left = mid + 1
+            lr_check = 1
+            # return binary_search(lst, num)
+        else:
+            return result
+
+T = int(input())
+for tc in range(1, T+1):
+    n, m = map(int, input().split())
+    A = sorted(list(map(int, input().split())))
+    B = list(map(int, input().split()))
+
+    cnt = 0
+
+    # 1. 두번째 리스트의 원소들을 차례로 이진탐색 함수에 넣어준다
+    for i in B:
+        # print(binary_search(A, i))
+        # 1-1. 만약 리턴값이 1이라면 카운팅해준다
+        if binary_search(A, i):
+            cnt += 1
+    # 3. 결과값 출력 
+    print(f'#{tc} {cnt}')
+```
+
+
+
+## #5208_전기버스2
+
+
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYGf7K180DFAVT#
+
+
+
+![image-20210420114339262](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210420114339262.png)
+
+![image-20210420114349374](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210420114349374.png)
+
+
+
+시간초과로 10개중 7개 맞은 코드
+
+```python
+def bus(st):
+    global change
+
+    for j in range(1, bat[st]+1):
+        # print(i+j)
+        change += 1
+        if st+j >= bat[0]:
+            if change_lst:
+                if change_lst[-1] > change:
+                    change_lst.append(change)
+            else:
+                change_lst.append(change)
+            change -= 1
+            return
+        else:
+            bus(st+j)
+            change -= 1
+
+
+T = int(input())
+for tc in range(1, T+1):
+    bat = list(map(int, input().split()))
+    change = -1
+    change_lst = []
+    bus(1)
+
+
+    # print(change_lst)
+    print(f'#{tc} {change_lst[-1]}')
+```
+
+
+
+
+
+반복문을 돌릴 때 내림차순으로 바꾸고 리스트에 append 하는 방식이 아니라 값을 바꿔주는 방법으로 변경하였다.
+
+유망하지 않은 길에 대해선 종료조건을 주어서 더 이상 가지 못하게 해주는게 중요하다.
+
+```python
+# 1. 백트래킹을 이용한 배터리 교체 함수
+def bus(st):
+    global change, result
+    
+    # 1-1. 이미 교환횟수가 기존값보다 크면 여기서 반환
+    if result < change:
+        return
+    # 1-2. 도착했을때 기존값보다 작으면 결과값으로 반영
+    if st >= bat[0]:
+        if result > change:
+            result = change
+        return
+    
+    # 1-3. 갈 수 있는 최대지점부터 시작해서 방문 
+    for j in range(st+bat[st], st, -1):
+        change += 1
+        bus(j)
+        change -= 1
+
+
+T = int(input())
+for tc in range(1, T+1):
+    # 0. 충전소 개수와 충전량들이 있는 리스트
+    bat = list(map(int, input().split()))
+    # 0. 첫 배터리 장착은 교환횟수에서 제외
+    change = -1
+    result = 9999
+    # 1. 백트래킹을 이용한 배터리 교체 함수
+    bus(1)
+    
+    # 2. 결과값 출력
+    print(f'#{tc} {result}')
+```
+
+
+
+
+
+## #5209_최소생산비용
+
+
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYGf7K180DFAVT#
+
+
+
+![image-20210420170548232](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210420170548232.png)![image-20210420170604408](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210420170604408.png)
+
+
+
+방문으로 이전에 사용했었는지 체크하기 전에 인덱스로 어떻게 접근할 수 있을까 생각하다가 시간이 오래걸렸다...
+
+방문을 체크하면 idx값을 한개씩 올려주면 이전의 열은 보지않게되고 
+
+total값으로 새로운 인덱스의 값들중에 이전에 가지 않았던 행들로 가서 값을 쌓아간다.
+
+같은 열이라도 다른 행으로 갈 수 있으므로 재귀로 함수에 들어갔다면 방문은 바로바로 지워줘야함.
+
+
+
+```python
+# 2. 중복되는 인덱스없이 최소비용을 구하는 함수
+def minimum_cost(idx, total):
+    global result
+    # 이미 구한 값보다 크다면 리턴 
+    if total > result:
+        return
+    # 길이만큼 재귀시켰으면 결과를 저장
+    if idx == n:
+        result = total
+    # 길이만큼 돌면서 이 전에 인덱스에 방문안한값들만 재귀 
+    for i in range(n):
+        if not visited[i]:
+            visited[i] = 1
+            minimum_cost(idx+1, total+cost[idx][i])
+            # 방문체크 지우기 
+            visited[i] = 0
+
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+    cost = [list(map(int, input().split())) for _ in range(n)]
+    # 0. 방문을 체크하기 위한 리스트
+    visited = [0 for _ in range(n)]
+    result = 9999
+    # 1. 중복되는 인덱스없이 최소비용을 구하는 함수
+    minimum_cost(0, 0)
+    
+    # 3. 결과값 출력
+    print(f'#{tc} {result}')
+```
+
+
+
+
+
+## #1865_동철이의 일 분배
+
+
+
+https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV5LuHfqDz8DFAXc
+
+
+
+![image-20210420182531256](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210420182531256.png)
+
+![image-20210420182540729](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210420182540729.png)
+
+
+
+재귀로 값을 계속 곱해 나갈 때, 이미 그 값이 그 전의 결과보다 크다고 해놓으면 
+
+테케에서 시간초과가 난다.
+
+크거나 같으면 반환시켜야지 테케를 모두 통과할 수 있다.
+
+
+
+소수점 6째 자리까지 출력하기 위해서는 그냥 round를 쓰면 안되고 :.0.6f로 표현해야지 0인 숫자들도 모두 출력할 수 있다.
+
+
+
+방문체크 기록하고 재귀를 돌리는 것은 위의 최소생산비용과 동일한 방식이다.
+
+
+
+```python
+import time
+import sys
+sys.stdin = open('input.txt')
+
+start = time.time()
+
+# 2. 가장 높은 확률 구해주는 함수
+def solution(idx, total):
+    global result
+
+    # 이미 크거나 같다면 끝내주기 (같다를 주지 않으면 36번 테케에서 안 끝남)
+    if total <= result:
+        return
+    # 사람수만큼 왔다면 결과값 저장
+    if idx == n:
+        result = total
+
+    # 사람한명이 한명의 일을 가져가게 기록체크 재귀하고나선 기록 지우기
+    for i in range(n):
+        if not visited[i]:
+            visited[i] = 1
+            solution(idx+1, total*work[idx][i]*0.01)
+            visited[i] = 0
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+    # print(n)
+    work = [list(map(int, input().split())) for _ in range(n)]
+    # print(work)
+    result = 0
+    visited = [0 for _ in range(n)]
+    # 1. 가장 높은 확률을 구해주는 함수 (곱셈이니 두번째 인덱스 total은 1)
+    solution(0, 1)
+    result = result*100
+
+    # 3. 결과값 출력
+    print(f'#{tc} {result:.6f}')
+print("time :", time.time() - start)
+```
+
+
+
+
+
+
+
+## #2806_N_Queen
+
+
+
+https://swexpertacademy.com/main/talk/solvingClub/problemView.do?solveclubId=AXd7Q4tqYs0DFAUO&contestProbId=AV7GKs06AU0DFAXB&probBoxId=AXd7RueqYu4DFAUO&type=PROBLEM&problemBoxTitle=
+
+
+
+![image-20210420235119412](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210420235119412.png)
+
+![image-20210420235129709](C:\Users\a\알고리즘\.SWEA_README\4월 SWEA README.assets\image-20210420235129709.png)
+
+
+
+
+
+ 대각선 부분의 처리를 어떻게 하는지 이해하려고 여러번 생각하였다.
+
+오른쪽 대각선 왼쪽 대각선 나눠서 행-열, 행+열 을 처리해주는 방법이 있고
+
+그냥 둘 사이의 거리를 절대값으로 덮어주면 두 대각선 모두 처리 가능하였다.
+
+그리고 방문의 기록을 row에 기록하지만 실제로는 이게 열에 같은 값이 있는지 체크해주는것이다.
+
+말도 어렵고 이해하기도 어려운 문제이다 :joy:
+
+
+
+```python
+# 3. 대각선 체크 : 같은 대각선상에 있다면 x와 y의 거리의 절대값이 같다 한개라도 안겹치면 True로 반환된다 
+def check(y, x):
+    for i in range(y):
+        if y - i == abs(x - diagonal[i]):
+            return False
+    return True
+
+
+# 2. n까지 갔을 때 n개의 퀸을 놓는 경우를 세는 함수 실행
+def n_queen(y):
+    global cnt, result
+    
+    # 만약 n까지 갔고 퀸도 n개라면 
+    if y == n and cnt == n:
+        # 경우의 수 더하기 
+        result += 1
+        return
+    
+    # row에 x를 넣어가면서 같은 열에 이미 퀸이 있는지 체크
+    for x in range(n):
+        # 3. 대각선도 체크 
+        if not visited[x] and check(y, x):
+            # 열과 대각선에 체크 
+            visited[x] = 1
+            cnt += 1
+            diagonal[y] = x
+            # col (y)값 늘리고 재귀  
+            n_queen(y+1)
+            # 재귀후 원상복귀
+            visited[x] = 0
+            cnt -= 1
+            diagonal[y] = 0
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n = int(input())
+
+    # 같은 열과 대각선의 정보를 담을 리스트
+    visited = [0 for _ in range(n)]
+    diagonal = [0 for _ in range(n)]
+
+    cnt = 0
+    result = 0
+    # 1. n까지 갔을 때 n개의 퀸을 놓는 경우를 세는 함수 실행
+    n_queen(0)
+    
+    # 4. 결과값 출력 
+    print(f'#{tc} {result}')
+```
+
+
+
+
+
+## #5247_연산
+
+
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYG3y62EcDFAVT&&#
+
+**※ SW Expert 아카데미의 문제를 무단 복제하는 것을 금지합니다.**
+
+
+자연수 N에 몇 번의 연산을 통해 다른 자연수 M을 만들려고 한다.
+
+사용할 수 있는 연산이 +1, -1, *2, -10 네 가지라고 할 때 최소 몇 번의 연산을 거쳐야 하는지 알아내는 프로그램을 만드시오.
+
+단, 연산의 중간 결과도 항상 백만 이하의 자연수여야 한다.
+
+예를 들어 N=2, M=7인 경우, (2+1) *2 +1 = 7이므로 최소 3번의 연산이 필요한다.
+
+
+**[입력]**
+
+첫 줄에 테스트 케이스의 개수가 주어지고, 다음 줄부터 테스트 케이스 별로 첫 줄에 N과 M이 주어진다. 1<=N, M<=1,000,000, N!=M
+
+**[출력]**
+
+각 줄마다 "#T" (T는 테스트 케이스 번호)를 출력한 뒤, 답을 출력한다.
+ 
+
+입력
+
+| 3 2 7 3 15 36 1007 |      |
+| ------------------ | ---- |
+|                    |      |
+
+[sample_input.txt](https://swexpertacademy.com/main/common/contestProb/contestProbDown.do?downType=in&contestProbId=AWUS1FaKImUDFAVT&_menuId=AVtnUz06AA3w6KZN&_menuF=true)
+
+출력
+
+| #1 3 #2 4 #3 8 |      |
+| -------------- | ---- |
+|                |      |
+
+[sample_output.txt](https://swexpertacademy.com/main/common/contestProb/contestProbDown.do?downType=out&contestProbId=AWUS1FaKImUDFAVT&_menuId=AVtnUz06AA3w6KZN&_menuF=true)
+
+
+
+큐에는 초기에 배정된 숫자와 카운팅 변수를 집어넣는다.
+
+카운팅변수는 다음 bfs 단계로 넘어가기전에 1씩 더해주고 큐에서 숫자와 카운팅을 pop할 때 이미 pop했던 값이면 continue로 아래의 계산을 수행하지 않게 해준다.
+
+방문을 고려해주지 않으면 3개의 tc에서 통과하지 못하고
+
+백만값을 정확히 제한해주지 않으면 4개의 tc에서 통과하지 못한다.
+
+
+
+```python
+from collections import deque
+import sys
+
+sys.stdin = open('input.txt')
+
+
+# 2. bfs를 돌며 a에서 b만드는 연산
+def bfs(a, b):
+    global cnt
+    q = deque()
+    # 초기값
+    q.append((a, 0))
+    # 중복을 제거할 딕셔너리
+    check = {}
+
+    while q:
+        num, cnt = q.popleft()
+        # tc 3개-> 6개 이미 벨류가 있는 num 이라면 다음 회차 while q로 넘어간다. 
+        if check.get(num):
+            continue
+        check[num] = 1
+        if num == b:
+            return cnt
+        cnt += 1
+        # 백만 넘게까지 주면 tc를 모두 통과하지 못함
+        if 0 < num + 1 <= 1000000:
+            q.append((num+1, cnt))
+        if 0 < num - 1 <= 1000000:
+            q.append((num-1, cnt))
+        if 0 < num * 2 <= 1000000:
+            q.append((num*2, cnt))
+        if 0 < num - 10 <= 1000000:
+            q.append((num-10, cnt))
+
+
+
+
+T = int(input())
+for tc in range(1, T+1):
+    a, b = map(int, input().split())
+    cnt = 0
+    # 1. bfs를 돌며 b값이 되게 연산
+    bfs(a, b)
+    # 3. 결과값출력
+    print(f'#{tc} {cnt}')
+```
+
+
+
+
+
+
+
+## #5248_그룹나누기
+
+
+
+https://swexpertacademy.com/main/learn/course/subjectDetail.do?courseId=AVuPDYSqAAbw5UW6&subjectId=AWUYG3y62EcDFAVT&&#
+
+
+
+
+
+**※ SW Expert 아카데미의 문제를 무단 복제하는 것을 금지합니다.**
+
+
+수업에서 같은 조에 참여하고 싶은 사람끼리 두 사람의 출석 번호를 종이에 적어 제출하였다.
+
+한 조의 인원에 제한을 두지 않았기 때문에, 한 사람이 여러 장의 종이를 제출하거나 여러 사람이 한 사람을 지목한 경우 모두 같은 조가 된다.
+
+예를 들어 1번-2번, 1번-3번이 같은 조가 되고 싶다고 하면, 1-2-3번이 같은 조가 된다. 번호를 적지도 않고 다른 사람에게 지목되지도 않은 사람은 단독으로 조를 구성하게 된다.
+
+1번부터 N번까지의 출석번호가 있고, M 장의 신청서가 제출되었을 때 전체 몇 개의 조가 만들어지는지 출력하는 프로그램을 만드시오.
+
+
+**[입력]**
+
+첫 줄에 테스트 케이스의 개수가 주어지고, 다음 줄부터 테스트 케이스 별로 첫 줄에 N과 M, 다음 줄에 M 쌍의 번호가 주어진다. 2<=N<=100, 1<=M<=100
+
+**[출력]**
+
+각 줄마다 "#T" (T는 테스트 케이스 번호)를 출력한 뒤, 답을 출력한다.
+ 
+
+입력
+
+
+
+| 3 5 2 1 2 3 4 5 3 1 2 2 3 4 5 7 4 2 3 4 5 4 6 7 4 |      |
+| ------------------------------------------------- | ---- |
+|                                                   |      |
+
+
+
+[sample_input.txt](https://swexpertacademy.com/main/common/contestProb/contestProbDown.do?downType=in&contestProbId=AWUS2OVaIpgDFAVT&_menuId=AVtnUz06AA3w6KZN&_menuF=true)
+
+출력
+
+
+
+#1 3 #2 2 #3 3
+
+[	sample_output.txt ](https://swexpertacademy.com/main/common/contestProb/contestProbDown.do?downType=out&contestProbId=AWUS2OVaIpgDFAVT&_menuId=AVtnUz06AA3w6KZN&_menuF=true)
+
+
+
+딕셔너리를 이용하려고 했는데 딕셔너리에 값을 추가해나가는게 어려워서 다른 방법을 찾다가  두개의 함수를 만들어 내가 지목한 사람의 인덱스에 나의 값을 넣고 set으로 중복 제거한 개수를 알아보는 방법으로 하였다.
+
+마지막에 tc가 정답으로 안나와서 뭐를 놓쳤나 봤는데 내가 지목한 사람들과 같은 팀이 되고
+
+내가 지목받은 사람들과 같은 팀이 되면,
+
+내가 지목한 팀원과 나를 지목한 팀원의 연결이 안되어서 다시 find_set 함수를 통해 마지막에 바뀐 나의 팀까지 적용시켜주어야 했다.
+
+그래프에 다시 입문한 느낌이다..
+
+
+
+```python
+# 3. 원래 인덱스는 그대로 이미 다른 팀에 속했으면 그 팀의 번호 가져오기
+def find_set(x):
+    if x == parent[x]:
+        return x
+    else:
+        return find_set(parent[x])
+
+# 2. 내가 같은 팀 되고 싶은 사람 지목 (지목받은 사람의 인덱스에 내 번호 삽입)
+def combine(go, to):
+    parent[find_set(to)] = find_set(go)
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n, m = map(int, input().split())
+    # 팀을 정하는 신청서
+    pair = list(map(int, input().split()))
+
+    # 원래의 인덱스 번호를 저장
+    parent = [0] * (n+1)
+
+    # n이 아니라 n+1까지 해줘야 함
+    for i in range(n+1):
+        parent[i] = i
+
+    # 1. 짝수번호는 자신 홀수는 같은 팀이 되고 싶은 사람
+    for i in range(m):
+        go = pair[i*2]
+        to = pair[i*2+1]
+        # 내가 선택한 사람들과 같은 팀 되기 함수 실행
+        combine(go, to)
+
+    sp = set(parent)
+
+    # 4. 이 작업을 해줘야 자신을 선택한 사람과 내가 선택한 사람들이 같은 팀이 됨
+    result = []
+    for i in range(len(parent)):
+        result.append(find_set(i))
+    result = set(result)
+
+    # 5. 맨 앞에 0을 제외한 결과 출력 
+    print(f'#{tc} {len(result)-1}')
+```
+
+
+
+
+
+## #5251_최소이동거리
+
+
+
+
+
+
+
+다익스트라 이해가 잘 안가서 다른거랑 섞어서 쓰다가 테케 2개가 안맞았는데 어찌하다가 1개만 안맞고 다른건 맞습니다..
+
+하지만 이해가 잘 안갑니다.. 
+
+플로이드 와샬은 간단하게 구현되어 있던데 다익스트라는 조금 더 노력해보겠습니다
+
+
+
+```python
+from heapq import heappop, heappush
+
+# 10개중 8개 성공
+import sys
+sys.stdin = open('input.txt')
+
+
+# 2. 다익스트라 함수 실행
+def dijkstra(s, d):
+    global gragh, a
+    # n = len(gragh)
+    table = [INF for i in range(n+1)]
+    table[s] = 0
+    pq = [(0, 0)]
+    visited = [0 for _ in range(n+1)]
+    # print(gragh)
+    while pq:
+        d, idx = heappop(pq)
+
+        if visited[idx]:
+            continue
+
+        visited[idx] = 1
+        for a, b in gragh[idx]:
+            if b + d < table[a]:
+                table[a] = b + d
+                heappush(pq, [table[a], a])
+
+    return table[a]
+
+
+T = int(input())
+for tc in range(1, T+1):
+    n, e = map(int, input().split())
+    # nodes = [list(map(int, input().split())) for _ in range(e)]
+    # node = [[] for _ in range(n + 1)]
+    INF = int(1e9)
+
+    # 1. 주어진 s, e, w 를 이용하여 그래프를 그립니다
+    gragh = [[] for _ in range(n+1)]
+    for _ in range(e):
+        a, b, c = list(map(int, input().split()))
+        gragh[a].append((b, c))
+    # print(gragh)
+
+    # 2. 다익스트라 0부터 n까지 거리를 구해줍니다.
+
+    # 3. 결과값 출력
+    dist = dijkstra(0, n)
+    # for i in range(1, n):
+    #     dist = min(dist, dijkstra(0, i) + dijkstra(i, n))
+
+    print(f'#{tc} {dist}')
+```
+
+
 
