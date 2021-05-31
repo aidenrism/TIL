@@ -1,6 +1,6 @@
 [toc]
 
-# BOJ 문제풀이
+# BOJ 문제풀이 
 
  :smiley:  :slightly_smiling_face:  :sweat:  :face_with_head_bandage:
 
